@@ -17,6 +17,7 @@ const PropertyCardTop = ({
   navigation,
   description,
   owner,
+  routeName,
 }) => {
   const handleGoToDetails = () => {
     navigation.navigate("PropertyDetails", {
@@ -32,6 +33,7 @@ const PropertyCardTop = ({
       address,
       description,
       owner,
+      routeName,
     });
   };
 

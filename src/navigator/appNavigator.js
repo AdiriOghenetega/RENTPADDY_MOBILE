@@ -13,6 +13,10 @@ import MyTabBar from "./TabBar";
 import colors from "../configs/colors";
 import Notification from "../screens/notificationScreen/notification";
 import PropertyDetails from "../screens/propertyScreen/propertyDetails";
+import Settings from "../screens/profileScreen/settings";
+import EditProfile from "../screens/profileScreen/editProfile";
+import BookHistory from "../screens/profileScreen/bookHistory";
+import Security from "../screens/profileScreen/security";
 
 const Tab = createBottomTabNavigator();
 
@@ -41,7 +45,7 @@ export default function MyTabs() {
         component={Search}
       />
       <Tab.Screen
-        name="Chat"
+        name="Message"
         options={{
           headerShown: false,
         }}
@@ -55,9 +59,34 @@ export default function MyTabs() {
         component={Profile}
       />
       <Tab.Screen
+        name="EditProfile"
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+        }}
+        component={EditProfile}
+      />
+      <Tab.Screen
+        name="Security"
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+        }}
+        component={Security}
+      />
+      <Tab.Screen
+        name="BookHistory"
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+        }}
+        component={BookHistory}
+      />
+      <Tab.Screen
         name="Saved"
         options={{
           headerShown: false,
+          tabBarStyle: { display: "none" },
         }}
         component={Saved}
       />
@@ -67,6 +96,13 @@ export default function MyTabs() {
           headerShown: false,
         }}
         component={Notification}
+      />
+      <Tab.Screen
+        name="Settings"
+        options={{
+          headerShown: false,
+        }}
+        component={Settings}
       />
       <Tab.Screen
         name="PropertyDetails"

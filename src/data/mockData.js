@@ -184,3 +184,350 @@ export const mockProperties = [
     id: 6,
   },
 ];
+
+export const mockChatList= [
+  {
+    id: 1,
+    name: "John Doe",
+    profileImage: "https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cGVyc29ufGVufDB8fDB8fHww", // Replace with your image URL or provider
+    lastMessage: "Hey there! ",
+    unreadCount: 2,
+    messages: [
+    {
+      id: 1,
+      sender: "John Doe",
+      content: "Hello everyone!",
+      time: "10:00 AM",
+    },
+    {
+      id: 2,
+      sender: "Jane Smith",
+      content: "Hey John, how are you doing?",
+      time: "10:02 AM",
+    },
+    {
+      id: 3,
+      sender: "John Doe",
+      content: "I'm doing well, thanks for asking! What's new with you?",
+      time: "10:05 AM",
+    },
+    {
+      id: 4,
+      sender: "Michael Brown",
+      content: "Just joined the chat, what are you guys talking about?",
+      time: "10:10 AM",
+    },
+    // Add more message objects here
+  ],
+    time: "10:20 PM",
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    profileImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGVyc29ufGVufDB8fDB8fHww", // Replace with your image URL or provider
+    lastMessage: "Great to meet you!",
+    unreadCount: 0,
+    messages: [
+    {
+      id: 1,
+      sender: "John Doe",
+      content: "Hello everyone!",
+      time: "10:00 AM",
+    },
+    {
+      id: 2,
+      sender: "Jane Smith",
+      content: "Hey John, how are you doing?",
+      time: "10:02 AM",
+    },
+    {
+      id: 3,
+      sender: "John Doe",
+      content: "I'm doing well, thanks for asking! What's new with you?",
+      time: "10:05 AM",
+    },
+    {
+      id: 4,
+      sender: "Michael Brown",
+      content: "Just joined the chat, what are you guys talking about?",
+      time: "10:10 AM",
+    },
+    // Add more message objects here
+  ],
+    time: "Yesterday",
+  },
+  {
+    id: 3,
+    name: "Michael Brown",
+    profileImage: "https://images.unsplash.com/photo-1552058544-f2b08422138a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cGVyc29ufGVufDB8fDB8fHww", // Replace with your image URL or provider
+    lastMessage: "Sure, I can help with that.",
+    unreadCount: 1,
+    messages: [
+    {
+      id: 1,
+      sender: "John Doe",
+      content: "Hello everyone!",
+      time: "10:00 AM",
+    },
+    {
+      id: 2,
+      sender: "Jane Smith",
+      content: "Hey John, how are you doing?",
+      time: "10:02 AM",
+    },
+    {
+      id: 3,
+      sender: "John Doe",
+      content: "I'm doing well, thanks for asking! What's new with you?",
+      time: "10:05 AM",
+    },
+    {
+      id: 4,
+      sender: "Michael Brown",
+      content: "Just joined the chat, what are you guys talking about?",
+      time: "10:10 AM",
+    },
+    // Add more message objects here
+  ],
+    time: "02/20/2024",
+  },
+  {
+    id: 4,
+    name: "Alice Johnson",
+    profileImage: "https://plus.unsplash.com/premium_photo-1673835488133-c7bb0729c218?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8cGVyc29ufGVufDB8fDB8fHww", // Replace with your image URL or provider
+    lastMessage: "Meet me up",
+    unreadCount: 0,
+    messages: [
+    {
+      id: 1,
+      sender: "John Doe",
+      content: "Hello everyone!",
+      time: "10:00 AM",
+    },
+    {
+      id: 2,
+      sender: "Jane Smith",
+      content: "Hey John, how are you doing?",
+      time: "10:02 AM",
+    },
+    {
+      id: 3,
+      sender: "John Doe",
+      content: "I'm doing well, thanks for asking! What's new with you?",
+      time: "10:05 AM",
+    },
+    {
+      id: 4,
+      sender: "Michael Brown",
+      content: "Just joined the chat, what are you guys talking about?",
+      time: "10:10 AM",
+    },
+    // Add more message objects here
+  ],
+    time: "02/19/2024",
+  },
+  {
+    id: 5,
+    name: "John Doe",
+    profileImage: "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHBlcnNvbnxlbnwwfHwwfHx8MA%3D%3D", // Replace with your image URL or provider
+    lastMessage: "Hey there! ",
+    unreadCount: 2,
+    messages: [
+    {
+      id: 1,
+      sender: "John Doe",
+      content: "Hello everyone!",
+      time: "10:00 AM",
+    },
+    {
+      id: 2,
+      sender: "Jane Smith",
+      content: "Hey John, how are you doing?",
+      time: "10:02 AM",
+    },
+    {
+      id: 3,
+      sender: "John Doe",
+      content: "I'm doing well, thanks for asking! What's new with you?",
+      time: "10:05 AM",
+    },
+    {
+      id: 4,
+      sender: "Michael Brown",
+      content: "Just joined the chat, what are you guys talking about?",
+      time: "10:10 AM",
+    },
+    // Add more message objects here
+  ],
+    time: "10:20 PM",
+  },
+  {
+    id: 6,
+    name: "Jane Smith",
+    profileImage: "https://images.unsplash.com/photo-1554151228-14d9def656e4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8cGVyc29ufGVufDB8fDB8fHww", // Replace with your image URL or provider
+    lastMessage: "Great to meet you!",
+    unreadCount: 4,
+    messages: [
+    {
+      id: 1,
+      sender: "John Doe",
+      content: "Hello everyone!",
+      time: "10:00 AM",
+    },
+    {
+      id: 2,
+      sender: "Jane Smith",
+      content: "Hey John, how are you doing?",
+      time: "10:02 AM",
+    },
+    {
+      id: 3,
+      sender: "John Doe",
+      content: "I'm doing well, thanks for asking! What's new with you?",
+      time: "10:05 AM",
+    },
+    {
+      id: 4,
+      sender: "Michael Brown",
+      content: "Just joined the chat, what are you guys talking about?",
+      time: "10:10 AM",
+    },
+    // Add more message objects here
+  ],
+    time: "Yesterday",
+  },
+  {
+    id: 7,
+    name: "Michael Brown",
+    profileImage: "https://plus.unsplash.com/premium_photo-1674777843203-da3ebb9fbca0?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fHBlcnNvbnxlbnwwfHwwfHx8MA%3D%3D", // Replace with your image URL or provider
+    lastMessage: "Sure, I can help with that.",
+    unreadCount: 1,
+    messages: [
+    {
+      id: 1,
+      sender: "John Doe",
+      content: "Hello everyone!",
+      time: "10:00 AM",
+    },
+    {
+      id: 2,
+      sender: "Jane Smith",
+      content: "Hey John, how are you doing?",
+      time: "10:02 AM",
+    },
+    {
+      id: 3,
+      sender: "John Doe",
+      content: "I'm doing well, thanks for asking! What's new with you?",
+      time: "10:05 AM",
+    },
+    {
+      id: 4,
+      sender: "Michael Brown",
+      content: "Just joined the chat, what are you guys talking about?",
+      time: "10:10 AM",
+    },
+    // Add more message objects here
+  ],
+    time: "02/20/2024",
+  },
+  {
+    id: 8,
+    name: "Alice Johnson",
+    profileImage: "https://images.unsplash.com/photo-1499952127939-9bbf5af6c51c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fHBlcnNvbnxlbnwwfHwwfHx8MA%3D%3D", // Replace with your image URL or provider
+    lastMessage: "You there?",
+    unreadCount: 3,
+    messages: [
+    {
+      id: 1,
+      sender: "John Doe",
+      content: "Hello everyone!",
+      time: "10:00 AM",
+    },
+    {
+      id: 2,
+      sender: "Jane Smith",
+      content: "Hey John, how are you doing?",
+      time: "10:02 AM",
+    },
+    {
+      id: 3,
+      sender: "John Doe",
+      content: "I'm doing well, thanks for asking! What's new with you?",
+      time: "10:05 AM",
+    },
+    {
+      id: 4,
+      sender: "Michael Brown",
+      content: "Just joined the chat, what are you guys talking about?",
+      time: "10:10 AM",
+    },
+    // Add more message objects here
+  ],
+    time: "02/19/2024",
+  },
+  // ... add more chat data objects with desired properties
+];
+
+export const mockUserData = {
+  email: "johndoe@example.com",
+  mobile: "+1234567890",
+  name: "John Doe",
+  username: "johndoe123",
+  avatar: {
+    url: "https://plus.unsplash.com/premium_photo-1670148434900-5f0af77ba500?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8c3BsYXNofGVufDB8fDB8fHww", // Replace with your image URL or provider
+    public_id: "avatar-public-id", // Optional: Cloud storage identifier
+  },
+  coverPhoto: {
+    url: "https://plus.unsplash.com/premium_photo-1670148434900-5f0af77ba500?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8c3BsYXNofGVufDB8fDB8fHww", // Replace with your image URL or provider
+    public_id: "cover-photo-public-id", // Optional: Cloud storage identifier
+  },
+  bookingHistory: [
+    {
+      id: 1,
+      propertyName: "Beachfront Villa",
+      location: "Miami, FL",
+      checkInDate: "2024-03-10",
+      checkOutDate: "2024-03-15",
+      guests: 2,
+      images:[
+        "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG9tZXxlbnwwfHwwfHx8MA%3D%3D",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGhvbWV8ZW58MHx8MHx8fDA%3D",
+        "https://images.unsplash.com/photo-1618220179428-22790b461013?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGhvbWV8ZW58MHx8MHx8fDA%3D",
+      ],
+      status:"expired"
+      // Add other booking details here (e.g., total price, images)
+    },
+    {
+      id: 2,
+      propertyName: "Cozy Cabin",
+      location: "Lake Tahoe, CA",
+      checkInDate: "2024-02-01",
+      checkOutDate: "2024-02-05",
+      guests: 4,
+      images:[
+        "https://images.unsplash.com/photo-1501183638710-841dd1904471?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aG9tZXxlbnwwfHwwfHx8MA%3D%3D",
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8aG9tZXxlbnwwfHwwfHx8MA%3D%3D",
+        "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8aG9tZXxlbnwwfHwwfHx8MA%3D%3D",
+      ],
+      status:"active"
+      // Add other booking details here
+    },
+    {
+      id: 3,
+      propertyName: "Beachfront Villa",
+      location: "Miami, FL",
+      checkInDate: "2024-03-10",
+      checkOutDate: "2024-03-15",
+      guests: 2,
+      images:[
+        "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG9tZXxlbnwwfHwwfHx8MA%3D%3D",
+        "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTV8fGhvbWV8ZW58MHx8MHx8fDA%3D",
+        "https://images.unsplash.com/photo-1618220179428-22790b461013?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fGhvbWV8ZW58MHx8MHx8fDA%3D",
+      ],
+      status:"expired"
+      // Add other booking details here (e.g., total price, images)
+    },
+    // Add more booking history objects here
+  ],
+};

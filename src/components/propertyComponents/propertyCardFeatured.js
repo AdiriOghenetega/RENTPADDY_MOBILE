@@ -18,6 +18,7 @@ export default function PropertyCardFeatured({
   navigation,
   description,
   owner,
+  routeName,
 }) {
   const [liked, setLiked] = useState(false);
 
@@ -47,6 +48,7 @@ export default function PropertyCardFeatured({
       address,
       description,
       owner,
+      routeName,
     });
   };
 

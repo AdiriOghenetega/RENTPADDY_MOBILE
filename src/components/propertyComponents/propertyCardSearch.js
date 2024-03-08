@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, Image, Dimensions, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
 import { Ionicons, Octicons } from "@expo/vector-icons";
 import colors from "../../configs/colors";
@@ -18,7 +25,8 @@ export default function PropertyCardSearch({
   address,
   description,
   owner,
-  navigation
+  navigation,
+  routeName,
 }) {
   let ratedStars, unratedStars;
   ratedStars = Array(Math.round(rating)).fill(
@@ -42,6 +50,7 @@ export default function PropertyCardSearch({
       address,
       description,
       owner,
+      routeName,
     });
   };
 

@@ -11,7 +11,6 @@ import {
 import React, { useState } from "react";
 import CustomHeader from "../../customComponents/customHeader";
 import CustomButton from "../../customComponents/CustomButton";
-import CustomHr from "../../customComponents/CustomHr";
 import { Octicons, SimpleLineIcons, Ionicons } from "@expo/vector-icons";
 import colors from "../../configs/colors";
 import { globalStyles } from "../../styles/globalStyles";
@@ -34,6 +33,7 @@ export default function PropertyDetails({ navigation, route }) {
     address,
     description,
     owner,
+    routeName,
   } = route.params;
 
   let ratedStars, unratedStars;
@@ -64,7 +64,7 @@ export default function PropertyDetails({ navigation, route }) {
   const handleBooking = () => {};
 
   const handleGoBack = () => {
-    navigation.goBack();
+    navigation.navigate(routeName);
   };
 
   return (

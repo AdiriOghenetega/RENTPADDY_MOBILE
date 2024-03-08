@@ -3,14 +3,14 @@ import colors from "../configs/colors";
 
 export const globalStyles = StyleSheet.create({
   shadowContainer: {
-    elevation: 3,
+    shadowColor: colors.lightgray,
     shadowOffset: {
-      width: 0.5,
-      height: 0.5,
+      width: 0,
+      height: 1
     },
-    shadowColor: "#333",
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3
   },
   logo: {
     width: 53,
@@ -67,5 +67,13 @@ export const globalStyles = StyleSheet.create({
   },
   dropDownButtonText: {
     fontSize: 15,
+  },
+  gridContainer:{
+    width: 50,
+    height: 50,
+    borderRadius: 10,
+    backgroundColor: colors.white,
+    alignItems:"center",
+    justifyContent:"center"
   },
 });

@@ -18,7 +18,7 @@ import PropertyCardSearch from "../../components/propertyComponents/propertyCard
 import Filter from "../../components/propertyComponents/filter";
 import { getMaxPrice } from "../../utils/maxPrice";
 
-export default function Search({ navigation }) {
+export default function Search({ navigation, route }) {
   const modalizeRef = useRef(null);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -134,6 +134,7 @@ export default function Search({ navigation }) {
                   description={item.description}
                   owner={item.owner}
                   navigation={navigation}
+                  routeName={route?.name}
                 />
               )}
               keyExtractor={(item) => item.id}

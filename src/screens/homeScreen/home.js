@@ -20,7 +20,7 @@ import { mockProperties } from "../../data/mockData";
 
 const { width, height } = Dimensions.get("window");
 
-export default function Home({ navigation }) {
+export default function Home({ navigation, route }) {
   const leftHeader = {
     exists: true,
     component: (
@@ -60,7 +60,7 @@ export default function Home({ navigation }) {
               data={mockProperties}
               renderItem={({ item }) => (
                 <PropertyCardFeatured
-                title={item.title}
+                  title={item.title}
                   img={item.images[0]}
                   images={item.images}
                   price={item.price}
@@ -73,6 +73,7 @@ export default function Home({ navigation }) {
                   description={item.description}
                   owner={item.owner}
                   navigation={navigation}
+                  routeName={route?.name}
                 />
               )}
               keyExtractor={(item) => item?.id.toString()}
@@ -96,19 +97,20 @@ export default function Home({ navigation }) {
               data={mockProperties}
               renderItem={({ item }) => (
                 <PropertyCardTop
-                title={item.title}
-                img={item.images[0]}
-                images={item.images}
-                price={item.price}
-                city={item.city}
-                state={item.state}
-                country={item.country}
-                reviews={item.reviews}
-                rating={item.rating}
-                address={item.address}
-                description={item.description}
-                owner={item.owner}
+                  title={item.title}
+                  img={item.images[0]}
+                  images={item.images}
+                  price={item.price}
+                  city={item.city}
+                  state={item.state}
+                  country={item.country}
+                  reviews={item.reviews}
+                  rating={item.rating}
+                  address={item.address}
+                  description={item.description}
+                  owner={item.owner}
                   navigation={navigation}
+                  routeName={route?.name}
                 />
               )}
               keyExtractor={(item) => item?.id.toString()}

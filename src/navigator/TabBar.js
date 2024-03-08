@@ -19,7 +19,7 @@ export default function MyTabBar({ state, descriptors, navigation }) {
     (route) =>
       route.name.toLowerCase() === "home" ||
       route.name.toLowerCase() === "search" ||
-      route.name.toLowerCase() === "chat" ||
+      route.name.toLowerCase() === "message" ||
       route.name.toLowerCase() === "profile"
   );
 
@@ -97,7 +97,7 @@ export default function MyTabBar({ state, descriptors, navigation }) {
                       size={22}
                     />
                   )) ||
-                  (route.name === "Chat" && (
+                  (route.name === "Message" && (
                     <Ionicons
                       name={
                         isFocused
