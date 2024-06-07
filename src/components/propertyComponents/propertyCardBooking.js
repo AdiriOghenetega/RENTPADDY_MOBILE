@@ -1,6 +1,11 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-import React from "react";
+import { StyleSheet, Text, View, TouchableOpacity, Image, Dimensions,Modal } from "react-native";
+import React,{useState} from "react";
 import colors from "../../configs/colors";
+import { mockProperties } from "../../data/mockData";
+import BookedPropertyDetails from "../../screens/propertyScreen/bookedPropertyDetails";
+
+
+const {height,width} = Dimensions.get("window")
 
 export default function PropertyCardBooking({
   propertyName,
@@ -9,25 +14,38 @@ export default function PropertyCardBooking({
   checkOutDate,
   images,
   status,
+  myBooking,
+  id,
+  navigation,
+  routeName
 }) {
+
+const handleNavigateToBookingDetails = () => {
+  navigation.navigate("BookedPropertyDetails", {
+    ...mockProperties[id],routeName,
+    myBooking
+})
+}
+
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity style={styles.container} onPress={handleNavigateToBookingDetails}>
       <View style={styles.imageContainer}>
         <Image source={{ uri: images[0] }} style={styles.image} />
       </View>
       <View style={styles.detailsContainer}>
         <Text style={styles.propertyNameText}>{propertyName}</Text>
         <Text style={styles.checkInDate}>Booked on : {checkInDate}</Text>
+        <Text style={styles.checkInDate}>{status === "expired" ? "Expired":"Expires"} on : {checkInDate}</Text>
         <View style={styles.statusContainer}>
         <Text
           style={[
             styles.statusText,
-            { color: status === "expired" ? colors.red : "green" },
+            { color: status === "expired" && colors.red || status === "active" &&  "green" || status === "pending" &&  "purple" },
           ]}
         >
           {status}
         </Text>
-        {status === "expired" && <TouchableOpacity>
+        {(status === "expired" && !myBooking) && <TouchableOpacity>
           <Text style={styles.bookAgain}>Book again</Text>
         </TouchableOpacity>}
         </View>
@@ -38,15 +56,16 @@ export default function PropertyCardBooking({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+   width:"100%",
     flexDirection: "row",
-    gap: 20,
     alignItems: "center",
+    justifyContent: "space-between",
     marginVertical: 10,
+    gap: 10,
   },
   imageContainer: {
-    width: 80,
-    height: 80,
+    width: 70,
+    height: 70,
     borderRadius: 10,
     overflow: "hidden",
   },
@@ -55,8 +74,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   detailsContainer: {
+    flex:1,
     gap: 5,
-    width:"80%"
   },
   propertyNameText: {
     fontSize: 16,
@@ -73,11 +92,11 @@ const styles = StyleSheet.create({
   statusContainer:{
     flexDirection:"row",
     alignItems:"center",
-  justifyContent:"space-between"
+  justifyContent:"space-between",
   },
   bookAgain:{
     color:colors.primary,
-    fontSize:16,
+    fontSize:14,
     fontWeight:"600",
   }
 });

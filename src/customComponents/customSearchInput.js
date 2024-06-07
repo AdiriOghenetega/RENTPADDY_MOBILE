@@ -4,10 +4,13 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Dimensions
 } from "react-native";
 import React from "react";
 import colors from "../configs/colors";
 import { EvilIcons, MaterialCommunityIcons } from "@expo/vector-icons";
+
+const { width } = Dimensions.get("window");
 
 export default function CustomSearchInput({
   placeholder,
@@ -49,7 +52,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     position: "relative",
-    width: "100%",
+    width: width -20,
+    alignSelf:"center",
   },
   textInputContainer: {
     padding: 5,
@@ -88,8 +92,9 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
   },
   filterContainer: {
-    width: "10%",
-    height: 60,
+    width: "11%",
+    paddingHorizontal: 10,
+    paddingVertical: 12,
     borderRadius: 10,
     backgroundColor: colors.secondary,
     justifyContent: "center",

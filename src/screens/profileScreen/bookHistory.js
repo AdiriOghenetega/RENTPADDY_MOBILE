@@ -1,37 +1,31 @@
-import { StyleSheet, Text, View, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, FlatList,Dimensions } from "react-native";
 import React from "react";
 import CustomHeader from "../../customComponents/customHeader";
 import colors from "../../configs/colors";
-import PropertyCardBooking from "../../components/profileComponents/propertyCardBooking";
+import PropertyCardBooking from "../../components/propertyComponents/propertyCardBooking";
+import BookedList from "../../components/propertyComponents/bookedList";
 import { mockUserData } from "../../data/mockData";
 
-export default function BookHistory({ navigation }) {
+const { width, height } = Dimensions.get("window");
+
+export default function BookHistory({ navigation,route }) {
+
+  const routeName = route?.params?.routeName
+  
   const { bookingHistory } = mockUserData;
+  // console.log(mockUserData,"see all")
   const handleNavigate = () => {
-    navigation.navigate("Profile");
+    navigation.navigate(routeName || "Profile");
   };
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
         title={"Booking History"}
         handleNavigate={handleNavigate}
+        handleNotificationNavigate={()=>navigation.navigate("Notification",{routeName:route?.name})}
         isNavigate={true}
       />
-      {bookingHistory?.length > 0 ? (
-        <View style={styles.historyFlatList}>
-          <FlatList
-            data={bookingHistory}
-            keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <PropertyCardBooking {...item} />}
-          />
-        </View>
-      ) : (
-        <View style={styles.emptyHistoryContainer}>
-          <Text style={styles.emptyHistoryText}>
-            There is no booking history, book now.
-          </Text>
-        </View>
-      )}
+      <BookedList data={bookingHistory} navigation={navigation} routeName={route?.name} />
     </SafeAreaView>
   );
 }
@@ -42,7 +36,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: colors.secondaryOffWhite,
   },
-  historyFlatList: {},
+  historyFlatList: {
+    flex: 1,
+  },
+  historyFlatListSubContainer: {
+    width: width - 20,
+    alignSelf: "center",
+  },
   emptyHistoryContainer: {
     justifyContent: "center",
     alignItems: "center",

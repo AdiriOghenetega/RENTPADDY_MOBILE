@@ -65,9 +65,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-evenly",
     alignItems: "center",
-    backgroundColor: "#F5FCFF",
     paddingVertical: 20,
     gap: 20,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
   },
   title: {
     fontSize: 25,
@@ -80,6 +81,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#EFF4FB",
     padding: 5,
     borderRadius: 10,
+    borderColor:"green",
+    borderWidth:10,
   },
   RentOption: {
     backgroundColor: colors.white,
@@ -91,7 +94,7 @@ const styles = StyleSheet.create({
   RentText: {
     color: colors.secondary,
     fontWeight: "bold",
-    fontSize: 22,
+    fontSize: 16,
   },
   propertyTypeContainer: {
     alignItems: "flex-start",

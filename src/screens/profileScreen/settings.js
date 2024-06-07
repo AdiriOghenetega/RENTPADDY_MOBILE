@@ -1,28 +1,38 @@
-import { StyleSheet, Text, View, SafeAreaView, Image, Switch } from "react-native";
-import React,{useState} from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  Image,
+  Switch,
+  TouchableOpacity,
+} from "react-native";
+import React, { useState } from "react";
 import colors from "../../configs/colors";
-import { Ionicons, MaterialIcons,FontAwesome6 } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons, FontAwesome6 } from "@expo/vector-icons";
 import CustomHeader from "../../customComponents/customHeader";
 import { mockUserData } from "../../data/mockData";
 import { globalStyles } from "../../styles/globalStyles";
 
-export default function Settings({ navigation }) {
-    const [isDarkmodeEnabled,setIsDarkmodeEnabled]=useState(false)
+export default function Settings({ navigation,route }) {
+  const [isDarkmodeEnabled, setIsDarkmodeEnabled] = useState(false);
   const { name, email, bookingHistory, avatar } = mockUserData;
 
-  const toggleModeSwitch = ()=>{
-    setIsDarkmodeEnabled(prev=>!prev)
-  }
+  const toggleModeSwitch = () => {
+    setIsDarkmodeEnabled((prev) => !prev);
+  };
 
   const rightHeader = {
     exists: true,
     component: (
-      <View style={[styles.imageContainer, globalStyles.gridContainer]}>
+      <TouchableOpacity 
+      style={[styles.imageContainer, globalStyles.gridContainer]} 
+      onPress={()=>navigation.navigate("Notification",{routeName:route?.name})}>
         <Image source={{ uri: avatar?.url }} style={styles.image} />
         <View style={styles.notificationIconContainer}>
           <MaterialIcons name="notifications" size={14} color="black" />
         </View>
-      </View>
+      </TouchableOpacity>
     ),
   };
 
@@ -39,44 +49,48 @@ export default function Settings({ navigation }) {
       />
       <View>
         <View style={styles.preferencesContainer}>
-            <Text style={styles.preferencesHeaderText}>Preferences</Text>
-            <View style={styles.preferencesOptionsContainer}>
-          <View style={styles.option}>
-            <View style={styles.optionDesc}>
-            <Ionicons name="globe-sharp" size={24} color={colors.primary} />
-              <Text style={styles.optionDescText}>Country</Text>
-            </View>
-            <View style={styles.optionCTA}>
-              <Text style={styles.selectedOptionText}>Nigeria</Text>
-              <MaterialIcons
-                name="keyboard-arrow-right"
-                size={24}
-                color={colors.secondary}
-              />
-            </View>
+          <Text style={styles.preferencesHeaderText}>Preferences</Text>
+          <View style={styles.preferencesOptionsContainer}>
+            <TouchableOpacity style={styles.option}>
+              <View style={styles.optionDesc}>
+                <Ionicons name="globe-sharp" size={24} color={colors.primary} />
+                <Text style={styles.optionDescText}>Country</Text>
+              </View>
+              <View style={styles.optionCTA}>
+                <Text style={styles.selectedOptionText}>Nigeria</Text>
+                <MaterialIcons
+                  name="keyboard-arrow-right"
+                  size={24}
+                  color={colors.secondary}
+                />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.option}>
+              <View style={styles.optionDesc}>
+                <FontAwesome6 name="language" size={24} color="green" />
+                <Text style={styles.optionDescText}>Language</Text>
+              </View>
+              <View style={styles.optionCTA}>
+                <Text style={styles.selectedOptionText}>English</Text>
+                <MaterialIcons
+                  name="keyboard-arrow-right"
+                  size={24}
+                  color={colors.secondary}
+                /> 
+              </View>
+            </TouchableOpacity>
           </View>
-          <View style={styles.option}>
-            <View style={styles.optionDesc}>
-            <FontAwesome6 name="language" size={24} color="green" />
-              <Text style={styles.optionDescText}>Language</Text>
-            </View>
-            <View style={styles.optionCTA}>
-              <Text style={styles.selectedOptionText}>English</Text>
-              <MaterialIcons
-                name="keyboard-arrow-right"
-                size={24}
-                color={colors.secondary}
-              />
-            </View>
-          </View>
-            </View>
         </View>
         <View style={styles.preferencesContainer}>
-           <Text style={styles.preferencesHeaderText}>Application Settings</Text>
-           <View style={styles.preferencesOptionsContainer}>
-           <View style={styles.option}>
+          <Text style={styles.preferencesHeaderText}>Application Settings</Text>
+          <View style={styles.preferencesOptionsContainer}>
+            <TouchableOpacity style={styles.option} onPress={()=>navigation.navigate("Support")}>
               <View style={styles.optionDesc}>
-              <MaterialIcons name="support-agent" size={24} color={colors.secondary} />
+                <MaterialIcons
+                  name="support-agent"
+                  size={24}
+                  color={colors.secondary}
+                />
                 <Text style={styles.optionDescText}>Support</Text>
               </View>
               <View style={styles.optionCTA}>
@@ -86,23 +100,14 @@ export default function Settings({ navigation }) {
                   color={colors.secondary}
                 />
               </View>
-            </View>
-           <View style={styles.option}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.option} onPress={()=>navigation.navigate("TermsAndConditions")}>
               <View style={styles.optionDesc}>
-              <MaterialIcons name="help-center" size={24} color={colors.secondary} />
-                <Text style={styles.optionDescText}>Help centre</Text>
-              </View>
-              <View style={styles.optionCTA}>
                 <MaterialIcons
-                  name="keyboard-arrow-right"
+                  name="library-books"
                   size={24}
                   color={colors.secondary}
                 />
-              </View>
-            </View>
-           <View style={styles.option}>
-              <View style={styles.optionDesc}>
-              <MaterialIcons name="library-books" size={24} color={colors.secondary} />
                 <Text style={styles.optionDescText}>Terms & conditions</Text>
               </View>
               <View style={styles.optionCTA}>
@@ -112,25 +117,14 @@ export default function Settings({ navigation }) {
                   color={colors.secondary}
                 />
               </View>
-            </View>
-           <View style={styles.option}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.option} onPress={()=>navigation.navigate("AboutUs")}>
               <View style={styles.optionDesc}>
-                <MaterialIcons name="sunny" size={24} color={colors.secondary} />
-                <Text style={styles.optionDescText}>Dark mode</Text>
-              </View>
-              <View style={styles.optionCTA}>
-                <Switch
-                  trackColor={{ false: "#767577", true: colors.secondary }}
-                  thumbColor={isDarkmodeEnabled ? "#f4f4f4" : "#f4f4f4"}
-                  ios_backgroundColor="#3e3e3e"
-                  onValueChange={toggleModeSwitch}
-                  value={isDarkmodeEnabled}
+                <MaterialIcons
+                  name="supervised-user-circle"
+                  size={24}
+                  color={colors.secondary}
                 />
-              </View>
-            </View>
-            <View style={styles.option}>
-              <View style={styles.optionDesc}>
-              <MaterialIcons name="supervised-user-circle" size={24} color={colors.secondary} />
                 <Text style={styles.optionDescText}>About us</Text>
               </View>
               <View style={styles.optionCTA}>
@@ -140,8 +134,8 @@ export default function Settings({ navigation }) {
                   color={colors.secondary}
                 />
               </View>
-            </View>
-           </View>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -171,19 +165,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 15,
   },
-  preferencesContainer:{
-    backgroundColor:colors.white,
-    padding:20,
-    marginVertical:20,
-    borderRadius:10
+  preferencesContainer: {
+    backgroundColor: colors.white,
+    padding: 20,
+    marginVertical: 20,
+    borderRadius: 10,
   },
-  preferencesOptionsContainer:{
-    marginVertical:10
+  preferencesOptionsContainer: {
+    marginVertical: 10,
+    gap:10
   },
-  preferencesHeaderText:{
-    fontSize:20,
-    color:colors.secondary,
-    fontWeight:"600"
+  preferencesHeaderText: {
+    fontSize: 20,
+    color: colors.secondary,
+    fontWeight: "600",
   },
   option: {
     flexDirection: "row",

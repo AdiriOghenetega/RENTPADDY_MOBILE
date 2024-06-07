@@ -70,7 +70,7 @@ export default function MyTabBar({ state, descriptors, navigation }) {
             onPress={onPress}
             onLongPress={onLongPress}
             key={route.key}
-            style={styles.tabContainer}
+            style={[styles.tabContainer,isFocused && {flex:1}]}
           >
             <View
               style={[
@@ -85,7 +85,7 @@ export default function MyTabBar({ state, descriptors, navigation }) {
                   <Ionicons
                     name={isFocused ? "home" : "home-outline"}
                     color={isFocused ? colors.secondary : colors.gray}
-                    size={22}
+                    size={24}
                   />
                 )) ||
                   (route.name === "Search" && (
@@ -94,7 +94,7 @@ export default function MyTabBar({ state, descriptors, navigation }) {
                         isFocused ? "feature-search" : "feature-search-outline"
                       }
                       color={isFocused ? colors.secondary : colors.gray}
-                      size={22}
+                      size={24}
                     />
                   )) ||
                   (route.name === "Message" && (
@@ -105,14 +105,14 @@ export default function MyTabBar({ state, descriptors, navigation }) {
                           : "chatbox-ellipses-outline"
                       }
                       color={isFocused ? colors.secondary : colors.gray}
-                      size={22}
+                      size={24}
                     />
                   )) ||
                   (route.name === "Profile" && (
                     <MaterialCommunityIcons
                       name={isFocused ? "account" : "account-outline"}
                       color={isFocused ? colors.secondary : colors.gray}
-                      size={22}
+                      size={24}
                     />
                   ))}
               </View>
@@ -120,7 +120,7 @@ export default function MyTabBar({ state, descriptors, navigation }) {
                 <Text
                   style={{
                     color: isFocused ? colors.secondary : colors.gray,
-                    fontSize: 13,
+                    fontSize: 10,
                   }}
                 >
                   {label}
@@ -139,14 +139,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: width * 0.95,
     alignSelf: "center",
+   
   },
   tabContainer: {
-    flex: 1,
-    height: 90,
-    justifyContent: "flex-start",
+    height: 70,
+    justifyContent: "center",
     alignItems: "center",
     backgroundColor: colors.white,
-    paddingTop: 23,
+    minWidth:"21%"
   },
   iconContainer: {
     flexDirection: "row",
@@ -155,5 +155,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 20,
+  
   },
 });

@@ -4,6 +4,7 @@ import colors from "../../configs/colors";
 import { globalStyles } from "../../styles/globalStyles";
 
 const PropertyCardTop = ({
+  _id,
   title,
   img,
   images,
@@ -11,14 +12,17 @@ const PropertyCardTop = ({
   city,
   state,
   country,
-  reviews,
-  rating,
   address,
   navigation,
   description,
   owner,
   routeName,
+  likes
 }) => {
+  
+  const reviews = []
+  const rating = 4;
+
   const handleGoToDetails = () => {
     navigation.navigate("PropertyDetails", {
       title,
@@ -34,13 +38,15 @@ const PropertyCardTop = ({
       description,
       owner,
       routeName,
+      likes,
+      propertyId: _id
     });
   };
 
   return (
     <TouchableOpacity style={styles.container} onPress={handleGoToDetails}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: img }} style={styles.image} />
+        <Image source={{ uri: img?.url }} style={styles.image} />
       </View>
       <View style={styles.detailsContainer}>
         <Text style={styles.locationText}>

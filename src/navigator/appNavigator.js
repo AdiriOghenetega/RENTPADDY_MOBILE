@@ -1,9 +1,4 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import LoginScreen from "../screens/authScreen/loginScreen";
-import RegisterScreen from "../screens/authScreen/registerScreen";
-import ForgotPassword from "../screens/authScreen/ForgotPassword";
-import OtpScreen from "../screens/authScreen/OtpScreen";
-import ResetPassword from "../screens/authScreen/ResetPassword";
 import Profile from "../screens/profileScreen/profile";
 import Home from "../screens/homeScreen/home";
 import Search from "../screens/propertyScreen/search";
@@ -17,13 +12,25 @@ import Settings from "../screens/profileScreen/settings";
 import EditProfile from "../screens/profileScreen/editProfile";
 import BookHistory from "../screens/profileScreen/bookHistory";
 import Security from "../screens/profileScreen/security";
+import Support from "../screens/profileScreen/support";
+import HelpCenter from "../screens/profileScreen/helpCenter";
+import TermsAndConditions from "../screens/profileScreen/termsAndConditions";
+import AboutUs from "../screens/profileScreen/aboutUs";
+import Reviews from "../screens/propertyScreen/reviews";
+import Faq from "../screens/profileScreen/faq";
+import FeaturedUnits from "../screens/propertyScreen/featuredUnits";
+import MyProperties from "../screens/profileScreen/myProperties";
+import MyBookedList from "../screens/profileScreen/myBookedList";
+import BookedPropertyDetails from "../screens/propertyScreen/bookedPropertyDetails";
+import ReviewList from "../screens/profileScreen/reviewList";
+
 
 const Tab = createBottomTabNavigator();
 
 export default function MyTabs() {
   return (
     <Tab.Navigator
-      initialRouteName="Login"
+      initialRouteName="Home"
       tabBar={(props) => <MyTabBar {...props} />}
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: colors.primary,
@@ -83,12 +90,28 @@ export default function MyTabs() {
         component={BookHistory}
       />
       <Tab.Screen
+        name="MyBookedList"
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+        }}
+        component={MyBookedList}
+      />
+      <Tab.Screen
         name="Saved"
         options={{
           headerShown: false,
           tabBarStyle: { display: "none" },
         }}
         component={Saved}
+      />
+      <Tab.Screen
+        name="FeaturedUnits"
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+        }}
+        component={FeaturedUnits}
       />
       <Tab.Screen
         name="Notification"
@@ -105,52 +128,83 @@ export default function MyTabs() {
         component={Settings}
       />
       <Tab.Screen
+        name="Support"
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+        }}
+        component={Support}
+      />
+      <Tab.Screen
+        name="HelpCenter"
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+        }}
+        component={HelpCenter}
+      />
+      <Tab.Screen
+        name="TermsAndConditions"
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+        }}
+        component={TermsAndConditions}
+      />
+      <Tab.Screen
+        name="AboutUs"
+        options={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+        }}
+        component={AboutUs}
+      />
+      <Tab.Screen
+        name="Reviews"
+        options={{
+          headerShown: false,
+        }}
+        component={Reviews}
+      />
+      <Tab.Screen
+        name="ReviewList"
+        options={{
+          headerShown: false,
+        }}
+        component={ReviewList}
+      />
+      <Tab.Screen
+        name="Faq"
+        options={{
+          headerShown: false,
+        }}
+        component={Faq}
+      />
+      <Tab.Screen
         name="PropertyDetails"
         options={{
           headerShown: false,
+          tabBarStyle: { display: "none" },
         }}
         component={PropertyDetails}
       />
       <Tab.Screen
-        name="Login"
-        component={LoginScreen}
+        name="BookedPropertyDetails"
         options={{
           headerShown: false,
           tabBarStyle: { display: "none" },
         }}
+        component={BookedPropertyDetails}
       />
       <Tab.Screen
-        name="Register"
-        component={RegisterScreen}
+        name="MyProperties"
         options={{
           headerShown: false,
           tabBarStyle: { display: "none" },
         }}
+        component={MyProperties}
       />
-      <Tab.Screen
-        name="ForgotPassword"
-        component={ForgotPassword}
-        options={{
-          headerShown: false,
-          tabBarStyle: { display: "none" },
-        }}
-      />
-      <Tab.Screen
-        name="OtpScreen"
-        component={OtpScreen}
-        options={{
-          headerShown: false,
-          tabBarStyle: { display: "none" },
-        }}
-      />
-      <Tab.Screen
-        name="ResetPassword"
-        component={ResetPassword}
-        options={{
-          headerShown: false,
-          tabBarStyle: { display: "none" },
-        }}
-      />
+      
     </Tab.Navigator>
   );
 }

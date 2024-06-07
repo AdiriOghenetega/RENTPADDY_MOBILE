@@ -8,25 +8,38 @@ import {
   Keyboard,
   FlatList,
   Dimensions,
+  ScrollView,
+  ActivityIndicator,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import CustomHeader from "../../customComponents/customHeader";
 import { Entypo } from "@expo/vector-icons";
 import colors from "../../configs/colors";
-import CustomSearchInput from "../../customComponents/customSearchInput";
 import PropertyCardFeatured from "../../components/propertyComponents/propertyCardFeatured";
 import PropertyCardTop from "../../components/propertyComponents/propertyCardTop";
-import { mockProperties } from "../../data/mockData";
+import {
+  useGetFeaturedPropertiesQuery,
+  useGetTopPropertiesQuery,
+} from "../../features/properties/propertiesApiSlice";
+import { globalStyles } from "../../styles/globalStyles";
 
 const { width, height } = Dimensions.get("window");
 
 export default function Home({ navigation, route }) {
+  const {
+    data: featuredProperties,
+  } = useGetFeaturedPropertiesQuery();
+
+  const {
+    data: topRatedProperties,
+  } = useGetTopPropertiesQuery();
+
   const leftHeader = {
     exists: true,
     component: (
       <TouchableOpacity
         style={styles.gridContainer}
-        onPress={() => navigation.navigate("Saved")}
+        onPress={() => navigation.navigate("Saved", { routeName: route?.name })}
       >
         <Entypo name="grid" size={34} color={colors.secondary} />
       </TouchableOpacity>
@@ -34,8 +47,9 @@ export default function Home({ navigation, route }) {
   };
 
   const handleNotificationNavigate = () => {
-    navigation.navigate("Notification");
+    navigation.navigate("Notification", { routeName: route?.name });
   };
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -46,79 +60,85 @@ export default function Home({ navigation, route }) {
       />
 
       <View style={styles.propertiesContainer}>
-        <View style={styles.featuredProperties}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.featuredPropertiesHeader}>
-              <Text style={styles.featuredTitle}>Featured Units</Text>
-              <TouchableOpacity>
-                <Text style={styles.seeAllText}>see all</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableWithoutFeedback>
-          <View style={styles.featuredFlatlistContainer}>
-            <FlatList
-              data={mockProperties}
-              renderItem={({ item }) => (
-                <PropertyCardFeatured
-                  title={item.title}
-                  img={item.images[0]}
-                  images={item.images}
-                  price={item.price}
-                  city={item.city}
-                  state={item.state}
-                  country={item.country}
-                  reviews={item.reviews}
-                  rating={item.rating}
-                  address={item.address}
-                  description={item.description}
-                  owner={item.owner}
-                  navigation={navigation}
-                  routeName={route?.name}
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.featuredProperties}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={styles.featuredPropertiesHeader}>
+                <Text style={styles.featuredTitle}>Featured Units</Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("FeaturedUnits", { type: "Featured" })
+                  }
+                >
+                  <Text style={styles.seeAllText}>see all</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
+            <View style={styles.featuredFlatlistContainer}>
+              {featuredProperties?.length > 0 ? (
+                <FlatList
+                  data={featuredProperties}
+                  keyExtractor={(item) => item?._id}
+                  renderItem={({ item }) => (
+                    <PropertyCardFeatured
+                      {...item}
+                      img={item.images[0]}
+                      navigation={navigation}
+                      routeName={route?.name}
+                    />
+                  )}
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
                 />
+              ) : (
+                <View style={globalStyles.noPropertiesContainer}>
+                  <Text style={globalStyles.noPropertiesText}>
+                    No featured properties found
+                  </Text>
+                </View>
               )}
-              keyExtractor={(item) => item?.id.toString()}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-            />
+            </View>
           </View>
-        </View>
 
-        <View style={styles.featuredProperties}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.featuredPropertiesHeader}>
-              <Text style={styles.featuredTitle}>Top Units</Text>
-              <TouchableOpacity>
-                <Text style={styles.seeAllText}>see all</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableWithoutFeedback>
-          <View style={styles.featuredFlatlistContainer}>
-            <FlatList
-              data={mockProperties}
-              renderItem={({ item }) => (
-                <PropertyCardTop
-                  title={item.title}
-                  img={item.images[0]}
-                  images={item.images}
-                  price={item.price}
-                  city={item.city}
-                  state={item.state}
-                  country={item.country}
-                  reviews={item.reviews}
-                  rating={item.rating}
-                  address={item.address}
-                  description={item.description}
-                  owner={item.owner}
-                  navigation={navigation}
-                  routeName={route?.name}
+          <View style={styles.featuredProperties}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={styles.featuredPropertiesHeader}>
+                <Text style={styles.featuredTitle}>Top Units</Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("FeaturedUnits", { type: "Top" })
+                  }
+                >
+                  <Text style={styles.seeAllText}>see all</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
+            <View style={styles.featuredFlatlistContainer}>
+              {topRatedProperties?.length > 0 ? (
+                <FlatList
+                  data={topRatedProperties}
+                  renderItem={({ item }) => (
+                    <PropertyCardTop
+                      {...item}
+                      img={item.images[0]}
+                      navigation={navigation}
+                      routeName={route?.name}
+                    />
+                  )}
+                  keyExtractor={(item) => item?._id}
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
                 />
+              ) : (
+                <View style={globalStyles.noPropertiesContainer}>
+                  <Text style={globalStyles.noPropertiesText}>
+                    No top rated properties found
+                  </Text>
+                </View>
               )}
-              keyExtractor={(item) => item?.id.toString()}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-            />
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
@@ -129,6 +149,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 15,
     backgroundColor: colors.secondaryOffWhite,
+  },
+  propertiesContainer: {
+    flex: 1,
+    justifyContent: "space-between",
   },
   gridContainer: {
     width: 50,
@@ -143,6 +167,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 10,
+    paddingHorizontal: 10,
   },
   featuredTitle: {
     fontSize: 18,
@@ -156,8 +181,5 @@ const styles = StyleSheet.create({
     textTransform: "capitalize",
     color: colors.gray,
   },
-  propertiesContainer: {
-    justifyContent: "space-around",
-    flex: 1,
-  },
+ 
 });

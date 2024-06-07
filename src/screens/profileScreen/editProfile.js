@@ -20,7 +20,7 @@ import CustomHeader from "../../customComponents/customHeader";
 import * as ImagePicker from "expo-image-picker";
 import { mockUserData } from "../../data/mockData";
 
-export default function EditProfile({ navigation }) {
+export default function EditProfile({ navigation,route }) {
   const [editData, setEditData] = useState({
     name: "",
     username: "",
@@ -105,6 +105,7 @@ export default function EditProfile({ navigation }) {
           title={"Edit Profile"}
           isNavigate={true}
           handleNavigate={handleNavigate}
+          handleNotificationNavigate={()=>navigation.navigate("Notification",{routeName:route?.name})}
         />
         <ImageBackground source={coverPic} style={styles.profilePicParent}>
           <View style={styles.profilePicContainer}>

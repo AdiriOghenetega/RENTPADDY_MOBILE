@@ -15,21 +15,62 @@ import colors from "../../configs/colors";
 import GlassmorphicInput from "../../customComponents/GlassmorphicInput";
 import CustomButton from "../../customComponents/CustomButton";
 import CustomHr from "../../customComponents/CustomHr";
+import {useDispatch,useSelector} from "react-redux";
+import { setCredentials } from "../../features/auth/authSlice";
+import { useLoginMutation } from "../../features/auth/authApiSlice";
+import { secureSetItemAsync } from "../../utils/expoSecure";
+import { selectPushToken } from "../../features/notification/notificationSlice";
 
 const { height, width } = Dimensions.get("window");
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation,route }) {
+
+  const dispatch = useDispatch();
+
+  const expoPushToken = useSelector(selectPushToken)
+
+
+  const [login,{ isLoading }] = useLoginMutation();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    pushToken:expoPushToken
   });
   const [loading, setLoading] = useState(false);
 
+   //navigate to home or redirect page
+   const handleRedirect = () => {
+    if (route?.params) {
+        navigation.navigate("MyTabs", {
+          screen: "Search",
+          params: { slug, type: redirectType },
+        });
+    } else {
+      navigation.navigate("MyTabs");
+    }
+  };
+
   const handleLogin = async () => {
     setLoading(true);
-    // API call to login
-    navigation.navigate("Home")
-    setLoading(false);
+    try{
+      const userData = await login(formData).unwrap()
+      
+      if(userData?._id){
+        dispatch(setCredentials(userData))
+        await secureSetItemAsync("user", userData)
+        setFormData({
+          email: "",
+          password: "",
+        })
+        handleRedirect()   
+      }else{
+        alert(userData?.message || "Login failed. Please try again.")
+      }
+    }catch(err){
+      console.log(err);
+      alert("Login failed. Please check your connection and credentials");
+    }
   };
 
   return (
@@ -95,7 +136,7 @@ export default function LoginScreen({ navigation }) {
               </View>
 
               <View style={styles.loginButtonBox}>
-                {loading ? (
+                {isLoading ? (
                   <ActivityIndicator color={colors.primary} />
                 ) : (
                   <CustomButton buttonLabel="Login" onPress={handleLogin} />
@@ -107,7 +148,7 @@ export default function LoginScreen({ navigation }) {
               <View style={styles.otherCTA}>
                 <Text style={styles.subCTA}>New to RentPaddy? </Text>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("Register")}
+                  onPress={() => navigation.navigate("RegisterScreen")}
                 >
                   <Text style={styles.mainCTA}>Register</Text>
                 </TouchableOpacity>
@@ -179,9 +220,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   forgotPasswordText: {
-    color: colors.primary,
+    color: colors.secondary,
     fontFamily: "RalewayMedium",
     fontSize: 14,
+    fontWeight:"bold"
   },
   otherCTA: {
     paddingVertical: 15,
@@ -194,7 +236,8 @@ const styles = StyleSheet.create({
     fontFamily: "RalewayMedium",
   },
   mainCTA: {
-    fontFamily: "RalewayBold",
-    color: colors.primary,
+    fontFamily: "RalewayRegular",
+    color: colors.secondary,
+    fontWeight:"bold"
   },
 });

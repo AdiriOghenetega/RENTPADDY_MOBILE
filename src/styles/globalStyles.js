@@ -1,5 +1,7 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet,Dimensions } from "react-native";
 import colors from "../configs/colors";
+
+const { width, height } = Dimensions.get("window");
 
 export const globalStyles = StyleSheet.create({
   shadowContainer: {
@@ -51,7 +53,7 @@ export const globalStyles = StyleSheet.create({
     zIndex: 2,
   },
   dropDownButton: {
-    backgroundColor: "rgba(14, 168, 87, 0.3)",
+    backgroundColor: "rgba(0, 128, 255, 0.3)",
     width: "100%",
     height: 40,
     borderRadius: 10,
@@ -76,4 +78,41 @@ export const globalStyles = StyleSheet.create({
     alignItems:"center",
     justifyContent:"center"
   },
+  historyHeader:{
+    flexDirection:"row",
+    alignItems:"center",
+    justifyContent:"space-between"
+   },
+   headerText:{
+   fontSize:18,
+   color:colors.secondary,
+   },
+   viewAllText:{
+     color:colors.gray,
+     fontSize:14
+   },
+   likesContainer: {
+    position: "absolute",
+  bottom: 5,
+  right: 5,
+  zIndex: 1,
+  flexDirection: "row",
+  padding:5,
+  alignItems:"center"
+},
+likesText:{
+    color:colors.white,
+  fontSize:14,
+  marginRight:5
+},
+noPropertiesContainer: {
+  height: height / 3,
+},
+noPropertiesText: {
+  textAlign: "center",
+  fontSize: 18,
+  color: colors.secondary,
+  fontFamily: "RalewayRegular",
+  marginTop: 20,
+},
 });

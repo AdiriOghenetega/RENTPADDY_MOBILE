@@ -13,10 +13,23 @@ import { AntDesign } from "@expo/vector-icons";
 import CustomButton from "../../customComponents/CustomButton";
 import colors from "../../configs/colors";
 import { data } from "../../data/onboard";
+import{ useSelector } from "react-redux";
+import { selectCurrentUser } from "../../features/auth/authSlice";
 
 const { width, height } = Dimensions.get("window");
 
-const Onboard = ({ handleDone }) => {
+const Onboard = ({ navigation }) => {
+
+  const userInfo = useSelector(selectCurrentUser);
+
+const handleDone = ()=>{
+  if(userInfo?._id){
+    navigation.navigate("MyTabs")
+  }else{
+    navigation.navigate("LoginScreen")
+  }
+}
+
   const renderDoneButton = () => (
     <CustomButton
       buttonLabel={"Get Started"}
@@ -52,6 +65,7 @@ const Onboard = ({ handleDone }) => {
       </View>
     </View>
   );
+
 
   return (
     <SafeAreaView style={styles.container}>

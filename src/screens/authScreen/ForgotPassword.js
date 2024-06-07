@@ -15,22 +15,37 @@ import colors from "../../configs/colors";
 import GlassmorphicInput from "../../customComponents/GlassmorphicInput";
 import CustomButton from "../../customComponents/CustomButton";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useResetCodeMutation } from "../../features/auth/authApiSlice";
 
 const { height, width } = Dimensions.get("window");
 
 const ForgotPassword = ({ navigation }) => {
+
+  const [resetCode,{isLoading}] = useResetCodeMutation();
+
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleForgotPassword = async () => {
-    setLoading(true);
+
     if (!email) {
       Alert.alert("Error", "Please enter email");
-      setLoading(false);
+      
       return;
     }
-    navigation.navigate("OtpScreen", { email });
-    setLoading(false);
+
+    try{
+      const response = await resetCode({email}).unwrap()
+     
+      if(response?.message === "Password reset code sent to your email"){
+        navigation.navigate("OtpScreen", { email });
+      }else{
+        alert(response?.message || "Something went wrong, please try again")
+      }
+    }catch(err){
+      alert("Network Error, please try again")
+      console.log(err)
+    }
   };
 
   return (
@@ -60,7 +75,7 @@ const ForgotPassword = ({ navigation }) => {
             </View>
           </View>
           <View style={styles.buttonContainer}>
-            {loading ? (
+            {isLoading ? (
               <ActivityIndicator />
             ) : (
               <CustomButton
@@ -70,7 +85,7 @@ const ForgotPassword = ({ navigation }) => {
             )}
             <CustomButton
               buttonLabel="Back"
-              onPress={() => navigation.navigate("Login")}
+              onPress={() => navigation.navigate("LoginScreen")}
             />
           </View>
         </View>

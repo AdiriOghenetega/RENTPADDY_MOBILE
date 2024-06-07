@@ -19,10 +19,15 @@ import CustomButton from "../../customComponents/CustomButton";
 import CustomHr from "../../customComponents/CustomHr";
 import { FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { useRegisterMutation } from "../../features/auth/authApiSlice";
+import { EXPO_PUBLIC_BASE_URL } from "@env";
 
 const { height, width } = Dimensions.get("window");
 
 export default function RegisterScreen({ navigation }) {
+
+  const [register,{ isLoading }] = useRegisterMutation();
+
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -32,6 +37,7 @@ export default function RegisterScreen({ navigation }) {
     mobile: "",
     avatar: "",
   });
+
   const [loading, setLoading] = useState(false);
 
   const handleFormChange = (name, text) => {
@@ -42,7 +48,41 @@ export default function RegisterScreen({ navigation }) {
       };
     });
   };
-  const handleRegister = async () => {};
+
+  const handleRegister = async () => {
+    const formdata = new FormData();
+    formdata.append("name", formData.name);
+    formdata.append("username", formData.username);
+    formdata.append("password", formData.password);
+    formdata.append("email", formData.email);
+    formdata.append("mobile", formData.mobile);
+    formdata.append("avatar", {
+      name: new Date() + "_avatar",
+      uri: formData.avatar,
+      type: "image/jpg",
+    })
+
+    try {
+      const userData = await register(formdata).unwrap()
+      if(userData?._id){
+        setFormData({
+          name: "",
+          username: "",
+          password: "",
+          confirmpassword: "",
+          email: "",
+          mobile: "",
+          avatar: "",
+        })
+           navigation.navigate("LoginScreen")
+      }else{
+        alert(userData?.message || "Registration failed. Please try again.")
+      }
+  } catch (err) {
+    alert("Network Error. Please try again.");
+     console.log(err);
+  }
+  };
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -75,7 +115,7 @@ export default function RegisterScreen({ navigation }) {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false} >
               <View style={styles.formContainer}>
                 <View style={styles.avatarContainer}>
                   <View style={styles.avatarDisplay}>
@@ -96,14 +136,14 @@ export default function RegisterScreen({ navigation }) {
                       />
                     )}
                   </View>
-                  {!formData?.avatar && (
+                   
                     <TouchableOpacity
                       style={styles.avatarUploadTextContainer}
                       onPress={pickImageAsync}
                     >
                       <Text style={styles.avatarUploadText}>upload</Text>
                     </TouchableOpacity>
-                  )}
+                  
                 </View>
                 <View style={styles.loginBox}>
                   <View style={styles.textInputContainer}>
@@ -157,7 +197,7 @@ export default function RegisterScreen({ navigation }) {
                       placeholder="Confirm Password"
                       isPassword={true}
                       onChangeText={(text) => {
-                        handleFormChange("confirmPassword", text);
+                        handleFormChange("confirmpassword", text);
                       }}
                       value={formData.confirmpassword}
                     />
@@ -165,7 +205,7 @@ export default function RegisterScreen({ navigation }) {
                 </View>
 
                 <View style={styles.loginButtonBox}>
-                  {loading ? (
+                  {isLoading ? (
                     <ActivityIndicator color={colors.primary} />
                   ) : (
                     <CustomButton
@@ -180,7 +220,7 @@ export default function RegisterScreen({ navigation }) {
                 <View style={styles.otherCTA}>
                   <Text style={styles.subCTA}>Already have an account? </Text>
                   <TouchableOpacity
-                    onPress={() => navigation.navigate("Login")}
+                    onPress={() => navigation.navigate("LoginScreen")}
                   >
                     <Text style={styles.mainCTA}>Login</Text>
                   </TouchableOpacity>
@@ -210,7 +250,7 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
   formContainer:{
-  marginTop:40
+  marginTop:80,
   },
   avatarContainer: {
     flexDirection: "row",

@@ -13,6 +13,7 @@ import colors from "../../configs/colors";
 const { height, width } = Dimensions.get("window");
 
 export default function PropertyCardSearch({
+  _id,
   title,
   img,
   images,
@@ -20,14 +21,15 @@ export default function PropertyCardSearch({
   city,
   state,
   country,
-  reviews,
-  rating,
   address,
   description,
   owner,
   navigation,
   routeName,
+  likes
 }) {
+  const reviews = [];
+  const rating = 4;
   let ratedStars, unratedStars;
   ratedStars = Array(Math.round(rating)).fill(
     <Octicons name="star-fill" size={14} color="gold" />
@@ -38,26 +40,17 @@ export default function PropertyCardSearch({
 
   const handleGoToDetails = () => {
     navigation.navigate("PropertyDetails", {
-      title,
-      img,
-      images,
-      price,
-      city,
-      state,
-      country,
       reviews,
       rating,
-      address,
-      description,
-      owner,
       routeName,
+      propertyId:_id
     });
   };
 
   return (
     <TouchableOpacity style={styles.container} onPress={handleGoToDetails}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: img }} style={styles.image} />
+        <Image source={{ uri: img.url }} style={styles.image} />
       </View>
       <View style={styles.detailsContainer}>
         <Text>{title}</Text>

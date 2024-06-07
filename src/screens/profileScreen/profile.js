@@ -7,16 +7,28 @@ import {
   SafeAreaView,
   FlatList,
   Switch,
+  Dimensions,
+  ScrollView
 } from "react-native";
 import React, { useState } from "react";
 import CustomHeader from "../../customComponents/customHeader";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { globalStyles } from "../../styles/globalStyles";
 import { mockUserData } from "../../data/mockData";
-import PropertyCardBooking from "../../components/profileComponents/propertyCardBooking";
+import BookedList from "../../components/propertyComponents/bookedList";
+import MyBookedListComponent from "../../components/propertyComponents/myBookedList";
 import colors from "../../configs/colors";
+import { logOut } from "../../features/auth/authSlice";
+import { useDispatch } from "react-redux";
 
-export default function Profile({ navigation }) {
+const { width, height } = Dimensions.get("window");
+
+export default function Profile({ navigation, route }) {
+  
+  const dispatch = useDispatch();
+
+  const routeName = route?.params?.routeName
+  
   const [isLocationEnabled, setIsLocationEnabled] = useState(false); 
 
   const toggleLocationSwitch = () => {
@@ -24,6 +36,7 @@ export default function Profile({ navigation }) {
   };
 
   const { name, email, bookingHistory, avatar } = mockUserData;
+ 
 
   const rightHeader = {
     exists: true,
@@ -38,8 +51,14 @@ export default function Profile({ navigation }) {
   };
 
   const handleNavigate = () => {
-    navigation.goback();
+    navigation.navigate("Home");
   };
+
+const handleLogout = ()=>{
+  dispatch(logOut());
+  navigation.replace("LoginScreen")
+}
+
   return (
     <SafeAreaView style={styles.container}>
       <CustomHeader
@@ -48,6 +67,7 @@ export default function Profile({ navigation }) {
         rightHeader={rightHeader}
         handleNavigate={handleNavigate}
       />
+      <ScrollView>
       <View>
         <View style={styles.userInfoContainer}>
           <View style={styles.imageContainer}>
@@ -69,29 +89,56 @@ export default function Profile({ navigation }) {
           </View>
         </View>
         <View style={styles.historyContainer}>
-          <View style={styles.historyHeader}>
-            <Text style={styles.headerText}>History</Text>
+          <View style={globalStyles.historyHeader}>
+            <Text style={[globalStyles.headerText,{fontSize:16}]}>Recent Properties You Rented</Text>
             <TouchableOpacity onPress={()=>navigation.navigate("BookHistory")}>
-              <Text style={styles.viewAllText}>View all</Text>
+              <Text style={globalStyles.viewAllText}>View all</Text>
             </TouchableOpacity>
           </View>
-          {bookingHistory?.length > 0 ? <View style={styles.historyFlatList}>
-            <FlatList
-              data={bookingHistory}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => <PropertyCardBooking {...item} />}
-            />
-          </View>:
-          <View style={styles.emptyHistoryContainer}>
-            <Text style={styles.emptyHistoryText}>
-              There is no booking history, book now.
-            </Text>
+          
+          <BookedList data={bookingHistory.splice(0, 2)} navigation={navigation} routeName={route?.name} />
+          
+        </View>
+        <View style={styles.historyContainer}>
+          <View style={globalStyles.historyHeader}>
+            <Text style={[globalStyles.headerText,{fontSize:16}]}>Recent Properties Rented From You</Text>
+            <TouchableOpacity onPress={()=>navigation.navigate("MyBookedList")}>
+              <Text style={globalStyles.viewAllText}>View all</Text>
+            </TouchableOpacity>
           </View>
-          }
+          
+          <MyBookedListComponent data={bookingHistory.splice(0, 2)} navigation={navigation} routeName={route?.name} />
+          
         </View>
         <View style={styles.accountInfoContainer}>
           <Text style={styles.accountHeaderText}>My Account</Text>
           <View style={styles.accountOptionsContainer}>
+            <TouchableOpacity style={styles.option} onPress={()=>navigation.navigate("MyProperties")}>
+              <View style={styles.optionDesc}>
+                <MaterialIcons name="other-houses" size={24} color={colors.secondary} />
+                <Text style={styles.optionDescText}>My Properties</Text>
+              </View>
+              <View style={styles.optionCTA} >
+                <MaterialIcons
+                  name="keyboard-arrow-right"
+                  size={24}
+                  color={colors.secondary}
+                />
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.option} onPress={()=>navigation.navigate("ReviewList")}>
+              <View style={styles.optionDesc}>
+                <MaterialIcons name="reviews" size={24} color={colors.secondary} />
+                <Text style={styles.optionDescText}>Reviews</Text>
+              </View>
+              <View style={styles.optionCTA} >
+                <MaterialIcons
+                  name="keyboard-arrow-right"
+                  size={24}
+                  color={colors.secondary}
+                />
+              </View>
+            </TouchableOpacity>
             <TouchableOpacity style={styles.option} onPress={()=>navigation.navigate("Security")}>
               <View style={styles.optionDesc}>
                 <MaterialIcons name="security" size={24} color={colors.secondary} />
@@ -105,7 +152,7 @@ export default function Profile({ navigation }) {
                 />
               </View>
             </TouchableOpacity>
-            <View style={styles.option}>
+            <TouchableOpacity style={styles.option} onPress={()=>navigation.navigate("Saved",{routeName:route?.name})}>
               <View style={styles.optionDesc}>
               <MaterialIcons name="bookmark" size={24} color={colors.secondary} />
                 <Text style={styles.optionDescText}>Saved</Text>
@@ -117,7 +164,7 @@ export default function Profile({ navigation }) {
                   color={colors.secondary}
                 />
               </View>
-            </View>
+            </TouchableOpacity>
             <View style={styles.option}>
               <View style={styles.optionDesc}>
                 <MaterialIcons name="location-on" size={24} color={colors.secondary} />
@@ -133,15 +180,16 @@ export default function Profile({ navigation }) {
                 />
               </View>
             </View>
-            <View style={[styles.option,{marginLeft:4}]}>
+            <TouchableOpacity style={[styles.option,{marginLeft:4}]} onPress={handleLogout}>
               <View style={styles.optionDesc}>
                 <MaterialIcons name="logout" size={20} color={colors.secondary} />
                 <Text style={styles.optionDescText}>Logout</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -155,7 +203,8 @@ const styles = StyleSheet.create({
   userInfoContainer:{
    flexDirection:"row",
    alignItems:"center",
-   gap:20
+   justifyContent:"space-between",
+   paddingHorizontal:10,
   },
   imageContainer:{
     height:72,
@@ -168,7 +217,7 @@ const styles = StyleSheet.create({
     width:"100%"
   },
   detailsContainer:{
-   width:"85%"
+   width:"78%",
   },
   nameText:{
   fontSize:20,
@@ -177,7 +226,8 @@ const styles = StyleSheet.create({
   detailsSubContainer:{
     flexDirection:"row",
     alignItems:"center",
-    justifyContent:"space-between"
+    justifyContent:"space-between",
+    
   },
   emailText:{
     color:colors.gray,
@@ -197,21 +247,12 @@ fontSize:14
   marginVertical:20,
   borderRadius:10
   },
-  historyHeader:{
-   flexDirection:"row",
-   alignItems:"center",
-   justifyContent:"space-between"
-  },
-  headerText:{
-  fontSize:20,
-  color:colors.secondary,
-  },
-  viewAllText:{
-    color:colors.gray,
-    fontSize:14
-  },
   historyFlatList:{
 
+  },
+  historyFlatListSubContainer: {
+    width: width - 60,
+    alignSelf: "center",
   },
   emptyHistoryContainer:{
   justifyContent:"center",
@@ -228,17 +269,18 @@ fontSize:14
     borderRadius:10
   },
   accountHeaderText:{
-    fontSize:20,
+    fontSize:18,
     color:colors.secondary,
   },
   accountOptionsContainer:{
-    marginVertical:10
+    marginVertical:10,
+    gap:10
   },
   option:{
     flexDirection:"row",
     alignItems:"center",
     justifyContent:"space-between",
-    marginVertical:5
+    marginVertical:5,
   },
   optionDesc:{
    flexDirection:"row",

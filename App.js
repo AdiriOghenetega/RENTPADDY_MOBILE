@@ -3,19 +3,19 @@ import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import navigationtheme from "./src/navigator/navigationtheme";
-import Onboard from "./src/components/onboardComponents";
+import Onboard from "./src/screens/onboardScreen";
 import MyTabs from "./src/navigator/appNavigator";
 import * as Linking from "expo-linking";
 import { useFonts } from "expo-font";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Host, Portal } from "react-native-portalize";
+import { Provider } from "react-redux";
+import { store } from "./src/features/store";
+import AuthNavigator from "./src/navigator/authnavigator";
 
-const prefix = Linking.createURL("home");
+const prefix = Linking.createURL("/");
 
 export default function App() {
-  // STATE FOR ONBOARDING SCREEN
-  const [showOnboard, setShowOnboard] = useState(true);
-
   // FONTS
   const [fontsLoaded] = useFonts({
     RalewayThin: require("./assets/fonts/RalewayThin.ttf"),
@@ -45,21 +45,15 @@ export default function App() {
     },
   };
 
-  const handleOnboardFinish = () => {
-    setShowOnboard(false);
-  };
-
   return (
     <GestureHandlerRootView style={styles.container}>
-      <NavigationContainer theme={navigationtheme} linking={linking}>
-        <Host>
-          {showOnboard ? (
-            <Onboard handleDone={handleOnboardFinish} />
-          ) : (
-            <MyTabs />
-          )}
-        </Host>
-      </NavigationContainer>
+      <Host>
+        <Provider store={store}>
+          <NavigationContainer theme={navigationtheme} linking={linking}>
+            <AuthNavigator />
+          </NavigationContainer>
+        </Provider>
+      </Host>
     </GestureHandlerRootView>
   );
 }

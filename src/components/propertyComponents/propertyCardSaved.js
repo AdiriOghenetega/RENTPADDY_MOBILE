@@ -7,41 +7,35 @@ import {
   Dimensions,
 } from "react-native";
 import React from "react";
-import { Octicons, SimpleLineIcons, Ionicons } from "@expo/vector-icons";
+import { Octicons, Ionicons } from "@expo/vector-icons";
 import colors from "../../configs/colors";
 import { globalStyles } from "../../styles/globalStyles";
 
-const { width } = Dimensions.get("window");
+
+
 
 export default function PropertyCardSaved({
+  _id,
   title,
   images,
   price,
   city,
   state,
   country,
-  reviews,
-  rating,
-  address,
-  description,
-  owner,
   navigation,
   routeName,
+  saved,
 }) {
+
+  const reviews = [];
+  const rating = 4;
+
   const handleGoToDetails = () => {
     navigation.navigate("PropertyDetails", {
-      title,
-      images,
-      price,
-      city,
-      state,
-      country,
       reviews,
       rating,
-      address,
-      description,
-      owner,
       routeName,
+      propertyId:_id
     });
   };
 
@@ -51,7 +45,7 @@ export default function PropertyCardSaved({
       onPress={handleGoToDetails}
     >
       <View style={styles.imageContainer}>
-        <Image source={{ uri: images[0] }} style={styles.propertyImage} />
+        <Image source={{ uri: images[0]?.url }} style={styles.propertyImage} />
         <View style={styles.ratingContainer}>
           <Octicons name="star-fill" size={18} color="gold" />
           <Text style={styles.ratingText}>{rating}.0</Text>
@@ -70,9 +64,9 @@ export default function PropertyCardSaved({
             <Text style={styles.price}>₦{price}</Text>
             <Text style={styles.priceText}>/Month</Text>
           </View>
-          <View style={styles.bookMarkContainer}>
+          {saved && <View style={styles.bookMarkContainer}>
             <Ionicons name="bookmark" size={20} color={colors.secondary} />
-          </View>
+          </View>}
         </View>
       </View>
     </TouchableOpacity>
@@ -91,7 +85,6 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     borderRadius: 10,
-    width: width * 0.935,
     aspectRatio: 3 / 2,
     overflow: "hidden",
   },
@@ -134,6 +127,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
+    marginTop: 5,
   },
 
   locationText: {
@@ -144,6 +138,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingVertical:5
   },
   priceContainer: {
     flexDirection: "row",

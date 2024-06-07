@@ -6,6 +6,8 @@ import {
   FlatList,
   TouchableWithoutFeedback,
   Keyboard,
+  Dimensions,
+  ActivityIndicator
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { Modalize } from "react-native-modalize";
@@ -13,44 +15,32 @@ import { Portal } from "react-native-portalize";
 import CustomHeader from "../../customComponents/customHeader";
 import CustomSearchInput from "../../customComponents/customSearchInput";
 import colors from "../../configs/colors";
-import { mockProperties } from "../../data/mockData";
 import PropertyCardSearch from "../../components/propertyComponents/propertyCardSearch";
 import Filter from "../../components/propertyComponents/filter";
 import { getMaxPrice } from "../../utils/maxPrice";
+import { useGetAllPropertiesQuery } from "../../features/properties/propertiesApiSlice";
+
+const { height, width } = Dimensions.get("window");
 
 export default function Search({ navigation, route }) {
+
+  const { data: allProperties, isLoading } = useGetAllPropertiesQuery();
+
+
+  
   const modalizeRef = useRef(null);
+
+  const routeName = route?.params?.routeName;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [FilteredProperties, setFilteredProperties] = useState([]);
-  const maxPriceRange = getMaxPrice(mockProperties);
 
   useEffect(() => {
-    handleSearch();
-  }, [searchTerm]);
-
-  const onOpen = () => {
-    modalizeRef.current?.open();
-  };
-
-  const onClose = () => {
-    modalizeRef.current?.close();
-  };
-
-  const handleNavigate = () => {
-    navigation.navigate("Home");
-  };
-
-  const handleNotificationNavigate = () => {
-    navigation.navigate("Notification");
-  };
-
-  const onChangeText = (value) => {
-    setSearchTerm(value);
-  };
+   allProperties && handleSearch();
+  }, [searchTerm,allProperties]);
 
   const handleSearch = () => {
-    const searchedProperties = mockProperties.filter((property) => {
+    const searchedProperties = allProperties?.filter((property) => {
       return (
         property.title?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
         property.description
@@ -66,101 +56,123 @@ export default function Search({ navigation, route }) {
     if (searchedProperties) {
       setFilteredProperties(searchedProperties);
     } else {
-      setFilteredProperties(mockProperties);
+      setFilteredProperties(allProperties);
     }
   };
 
-  const handleFilterSearchTerm = (filter) => {
-    const filteredProperties = mockProperties.filter((property) => {
-      if (
-        filter.selectedPropertyType &&
-        property.type !== filter.selectedPropertyType
-      )
-        return false;
-      if (
-        filter.maxPricedRange &&
-        parseFloat(property.price) > parseFloat(filter.maxPricedRange)
-      )
-        return false;
-      return true;
-    });
+  if(!allProperties || isLoading){
+    return(
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary}/>
+      </View>
+    )
+  }else{
+    const maxPriceRange = getMaxPrice(allProperties);
 
-    filter.selectedPropertyType && setSearchTerm(filter?.selectedPropertyType);
-    setFilteredProperties(filteredProperties);
-  };
+    const onOpen = () => {
+      modalizeRef.current?.open();
+    };
+  
+    const onClose = () => {
+      modalizeRef.current?.close();
+    };
+  
+    const handleNavigate = () => {
+      navigation.navigate(routeName || "Home");
+    };
+  
+    const handleNotificationNavigate = () => {
+      navigation.navigate("Notification", { routeName: route?.name });
+    };
+  
+    const onChangeText = (value) => {
+      setSearchTerm(value);
+    };
+  
+  
+    const handleFilterSearchTerm = (filter) => {
+      const filteredProperties = allProperties?.filter((property) => {
+        if (
+          filter.selectedPropertyType &&
+          property.type !== filter.selectedPropertyType
+        )
+          return false;
+        if (
+          filter.maxPricedRange &&
+          parseFloat(property.price) > parseFloat(filter.maxPricedRange)
+        )
+          return false;
+        return true;
+      });
+  
+      filter.selectedPropertyType && setSearchTerm(filter?.selectedPropertyType);
+      setFilteredProperties(filteredProperties);
+    };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <CustomHeader
-        title={"Search"}
-        handleNavigate={handleNavigate}
-        handleNotificationNavigate={handleNotificationNavigate}
-        isNavigate={true}
-      />
-      <CustomSearchInput
-        placeholder={"Search"}
-        onChangeText={onChangeText}
-        handleSearch={handleSearch}
-        handleFilter={onOpen}
-        value={searchTerm}
-      />
-      {FilteredProperties?.length > 0 ? (
-        <View>
-          <View style={styles.searchPropertiesHeader}>
-            <Text style={styles.searchTitle}>
-              Results for "{searchTerm === "" ? "All" : searchTerm}"
-            </Text>
-            <View>
-              <Text style={styles.resultsFoundText}>
-                {FilteredProperties?.length} Results Found
+  
+    return (
+      <SafeAreaView style={styles.container}>
+        <CustomHeader
+          title={"Search"}
+          handleNavigate={handleNavigate}
+          handleNotificationNavigate={handleNotificationNavigate}
+          isNavigate={true}
+        />
+        <CustomSearchInput
+          placeholder={"Search"}
+          onChangeText={onChangeText}
+          handleSearch={handleSearch}
+          handleFilter={onOpen}
+          value={searchTerm}
+        />
+        {FilteredProperties?.length > 0 ? (
+          <View style={styles.searchPropertiesContainer}>
+            <View style={styles.searchPropertiesHeader}>
+              <Text style={styles.searchTitle}>
+                Results for "{searchTerm === "" ? "All" : searchTerm}"
               </Text>
+              <View>
+                <Text style={styles.resultsFoundText}>
+                  {FilteredProperties?.length} Results Found
+                </Text>
+              </View>
+            </View>
+            <View style={styles.flatListContainer}>
+             {FilteredProperties && <FlatList
+                data={FilteredProperties}
+                renderItem={({ item }) => (
+                  <PropertyCardSearch
+                    {...item}
+                    img={item.images[0]}
+                    navigation={navigation}
+                    routeName={route?.name}
+                  />
+                )}
+                keyExtractor={(item) => item._id}
+              />}
             </View>
           </View>
-          <View style={styles.flatListContainer}>
-            <FlatList
-              data={FilteredProperties}
-              renderItem={({ item }) => (
-                <PropertyCardSearch
-                  title={item.title}
-                  img={item.images[0]}
-                  images={item.images}
-                  price={item.price}
-                  city={item.city}
-                  state={item.state}
-                  country={item.country}
-                  reviews={item.reviews}
-                  rating={item.rating}
-                  address={item.address}
-                  description={item.description}
-                  owner={item.owner}
-                  navigation={navigation}
-                  routeName={route?.name}
-                />
-              )}
-              keyExtractor={(item) => item.id}
+        ) : (
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.noResultsContainer}>
+              <Text style={styles.noResultsText}>
+                No properties found for your search parameters
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
+        )}
+        <Portal>
+          <Modalize ref={modalizeRef} adjustToContentHeight={true}>
+            <Filter
+              onClose={onClose}
+              handleFilterSearchTerm={handleFilterSearchTerm}
+              maxPriceRange={maxPriceRange}
             />
-          </View>
-        </View>
-      ) : (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.noResultsContainer}>
-            <Text style={styles.noResultsText}>
-              No properties found for your search parameters
-            </Text>
-          </View>
-        </TouchableWithoutFeedback>
-      )}
-      <Portal>
-        <Modalize ref={modalizeRef} adjustToContentHeight={true}>
-          <Filter
-            onClose={onClose}
-            handleFilterSearchTerm={handleFilterSearchTerm}
-            maxPriceRange={maxPriceRange}
-          />
-        </Modalize>
-      </Portal>
-    </SafeAreaView>
-  );
+          </Modalize>
+        </Portal>
+      </SafeAreaView>
+    );
+  } 
 }
 
 const styles = StyleSheet.create({
@@ -168,6 +180,10 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 15,
     backgroundColor: colors.secondaryOffWhite,
+  },
+  searchPropertiesContainer: {
+    flex: 1,
+    paddingHorizontal: 10,
   },
   searchPropertiesHeader: {
     flexDirection: "row",
@@ -182,6 +198,9 @@ const styles = StyleSheet.create({
   },
   resultsFoundText: {
     color: colors.gray,
+  },
+  flatListContainer: {
+    height: height - 270,
   },
   noResultsContainer: {
     flex: 1,

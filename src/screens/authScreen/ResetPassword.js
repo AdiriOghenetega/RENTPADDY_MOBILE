@@ -15,10 +15,13 @@ import colors from "../../configs/colors";
 import GlassmorphicInput from "../../customComponents/GlassmorphicInput";
 import CustomButton from "../../customComponents/CustomButton";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useResetPasswordMutation } from "../../features/auth/authApiSlice";
 
 const { height, width } = Dimensions.get("window");
 
 const ResetPassword = ({ navigation, route }) => {
+  const [resetPassword, { isLoading }] = useResetPasswordMutation();
+
   const [data, setData] = useState({
     password: "",
     confirmPassword: "",
@@ -26,9 +29,36 @@ const ResetPassword = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
 
   const { otp, email } = route?.params;
-  console.log(otp, email);
 
-  const handleOtpSend = async () => {};
+  const handleOtpSend = async () => {
+    const { password, confirmPassword } = data;
+
+    if (!otp) {
+      alert("Error , Please enter OTP");
+      return;
+    }
+    if (!password || !confirmPassword) {
+      alert("Please enter password and confirm password");
+      return;
+    }
+
+    try {
+      const response = await resetPassword({
+        email,
+        resetCode: otp,
+        newPassword: password,
+      }).unwrap();
+
+      if (response?.message === "Password changed successfully") {
+        navigation.navigate("LoginScreen");
+      } else {
+        alert(response?.message || "Something went wrong, please try again");
+      }
+    } catch (err) {
+      alert("Network Error, please try again");
+      console.log(err);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>

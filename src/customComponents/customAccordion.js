@@ -1,9 +1,15 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Entypo } from "@expo/vector-icons";
-import colors from "./colors";
+import colors from "../configs/colors";
 
-const CustomAccordion = ({ title, message }) => {
+const CustomAccordion = ({ title, message, customMessageStyle, preOpen }) => {
+  useEffect(() => {
+    if (preOpen) {
+      setIsOpen(preOpen);
+    }
+  }, [preOpen]);
+
   const [isOpen, setIsOpen] = useState(false);
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
@@ -16,11 +22,11 @@ const CustomAccordion = ({ title, message }) => {
           size={18}
           color={!isOpen ? colors.primary : colors.lightgold}
         />
-        <Text>{title}</Text>
+        <Text style={styles.titleText}>{title}</Text>
       </TouchableOpacity>
       {isOpen && (
-        <View style={styles.message}>
-          <Text>{message}</Text>
+        <View style={[styles.message, customMessageStyle]}>
+          <Text style={styles.messageText}>{message}</Text>
         </View>
       )}
     </View>
@@ -29,17 +35,20 @@ const CustomAccordion = ({ title, message }) => {
 
 const styles = StyleSheet.create({
   container: {
-    width: "90%",
-    alignSelf: "center",
-    marginTop: 20,
+    flex: 1,
+    marginBottom: 5,
   },
   title: {
-    height: 34,
+    minHeight: 34,
     backgroundColor: colors.white,
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
-    paddingHorizontal: 5,
+    padding: 5,
+    flex: 1,
+  },
+  titleText: {
+    flex: 1,
   },
   message: {
     height: 107,
@@ -47,6 +56,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingVertical: 10,
     paddingHorizontal: 30,
+  },
+  messageText: {
+    color: colors.white,
   },
 });
 

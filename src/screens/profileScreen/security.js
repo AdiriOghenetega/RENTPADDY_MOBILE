@@ -4,6 +4,7 @@ import {
   View,
   SafeAreaView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import CustomHeader from "../../customComponents/customHeader";
@@ -11,8 +12,15 @@ import colors from "../../configs/colors";
 import GlassmorphicInput from "../../customComponents/GlassmorphicInput";
 import CustomButton from "../../customComponents/CustomButton";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useChangePasswordMutation } from "../../features/auth/authApiSlice";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../features/auth/authSlice";
 
-export default function Security({ navigation }) {
+export default function Security({ navigation, route }) {
+  const currentUser = useSelector(selectCurrentUser);
+
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
+
   const [toggleForm, setToggleForm] = useState(false);
   const [securityData, setSecurityData] = useState({
     oldPassword: "",
@@ -24,8 +32,39 @@ export default function Security({ navigation }) {
     navigation.navigate("Profile");
   };
 
-  const handlePasswordChange = () => {
-    console.log("password updated");
+  const handlePasswordChange = async () => {
+    const { oldPassword, newPassword, confirmPassword } = securityData;
+
+    if (newPassword !== confirmPassword) {
+      alert("New password and confirm password does not match");
+      return;
+    }
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      alert("Please fill all the fields");
+      return;
+    }
+
+    try {
+      const response = await changePassword({
+        userId: currentUser?._id,
+        body: { oldPassword: oldPassword, newPassword: newPassword },
+      }).unwrap();
+
+      if (response?.message === "Password changed successfully") {
+        alert("Password changed successfully");
+        setSecurityData({
+          oldPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        });
+      } else {
+        alert(response?.message || "Something went wrong, please try again");
+      }
+    } catch (err) {
+      alert("Network Error, please try again");
+      console.log(err);
+    }
   };
 
   return (
@@ -34,6 +73,9 @@ export default function Security({ navigation }) {
         isNavigate={true}
         title={"Security"}
         handleNavigate={handleNavigate}
+        handleNotificationNavigate={() =>
+          navigation.navigate("Notification", { routeName: route?.name })
+        }
       />
       <View style={styles.securityOptions}>
         <View style={styles.changePassword}>
@@ -105,10 +147,18 @@ export default function Security({ navigation }) {
                   />
                 </View>
               </View>
-              <CustomButton
-                buttonLabel={"Update"}
-                onPress={handlePasswordChange}
-              />
+              {isLoading ? (
+                <ActivityIndicator
+                  size={"small"}
+                  color={colors.primary}
+                  style={{ marginVertical: 10 }}
+                />
+              ) : (
+                <CustomButton
+                  buttonLabel={"Update"}
+                  onPress={handlePasswordChange}
+                />
+              )}
             </View>
           )}
         </View>

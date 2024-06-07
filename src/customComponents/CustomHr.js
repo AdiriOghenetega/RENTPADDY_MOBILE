@@ -21,7 +21,7 @@ const CustomHr = ({middleText}) => {
 
 const styles = StyleSheet.create({
     container:{
-        padding: 30
+        padding: 10
     },
     main:{
         flexDirection: 'row', 
