@@ -7,7 +7,7 @@ import colors from "../../configs/colors";
 const { width, height } = Dimensions.get("window");
 
 export default function BookedList({ data,navigation,routeName }) {
-  console.log(data);
+  
   return (
     <View style={styles.container}>
       {data?.length > 0 ? (

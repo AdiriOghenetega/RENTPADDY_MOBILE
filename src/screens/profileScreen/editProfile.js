@@ -11,16 +11,26 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import colors from "../../configs/colors";
 import GlassmorphicInput from "../../customComponents/GlassmorphicInput";
 import CustomButton from "../../customComponents/CustomButton";
 import CustomHeader from "../../customComponents/customHeader";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from 'expo-file-system';
+import { useUpdateuserMutation,useGetuserProfileQuery } from "../../features/user/userApiSlice";
+import { selectCurrentUser } from "../../features/auth/authSlice";
+import {useSelector} from "react-redux"
 import { mockUserData } from "../../data/mockData";
 
 export default function EditProfile({ navigation,route }) {
+
+  const userInfo = useSelector(selectCurrentUser)
+ const {data:userProfile,isLoading} = useGetuserProfileQuery({userId:userInfo._id})
+
+  const [updateProfile,{isLoading:updating}] = useUpdateuserMutation();
+
   const [editData, setEditData] = useState({
     name: "",
     username: "",
@@ -29,9 +39,21 @@ export default function EditProfile({ navigation,route }) {
     avatar: "",
     coverPhoto: "",
   });
+
   const [loading, setLoading] = useState(false);
 
-  const { avatar, coverPhoto } = mockUserData;
+  useEffect(()=>{
+     if(userProfile){
+      setEditData(prev=>{
+        return {
+          name:userProfile?.name,
+          username:userProfile?.username,
+          email:userProfile?.email,
+          mobile:userProfile?.mobile,
+        }
+      })
+     }
+  },[userProfile])
 
   const pickImage = async (id) => {
     try {
@@ -67,9 +89,63 @@ export default function EditProfile({ navigation,route }) {
     }
   };
 
-  const handleUpdateProfile = () => {
-    setLoading(true);
-    setLoading(false);
+  const handleUpdateProfile = async () => {
+
+    const {name,username,mobile,email,avatar,coverPhoto} = editData
+
+    const formdata = new FormData()
+
+    formdata.append("name",name)
+    formdata.append("username",username)
+    formdata.append("mobile",mobile)
+    formdata.append("email",email)
+
+    if(avatar){
+      let fileInfo = await FileSystem.getInfoAsync(avatar)
+        if(!fileInfo.exists){
+          alert("Something went wrong while uploading image")
+          return
+        }
+        let fileUri = fileInfo.uri
+        let fileName = fileUri.split("/").pop();
+        let fileType = fileName?.split(".").pop();
+        const mimeType = `image/${fileType}`;
+        formdata.append("avatar",{
+          name: fileName,
+          uri: fileUri ,
+          type: mimeType,
+        })
+    }
+
+    if(coverPhoto){
+      let fileInfo = await FileSystem.getInfoAsync(coverPhoto)
+        if(!fileInfo.exists){
+          alert("Something went wrong while uploading image")
+          return
+        }
+        let fileUri = fileInfo.uri
+        let fileName = fileUri.split("/").pop();
+        let fileType = fileName?.split(".").pop();
+        const mimeType = `image/${fileType}`;
+        formdata.append("avatar",{
+          name: fileName,
+          uri: fileUri ,
+          type: mimeType,
+        })
+    }
+
+    try{
+        const res =  await updateProfile({userId:userInfo._id,body:formdata}).unwrap()
+        console.log(res)
+        if(res?._id){
+          alert("Profile Updated Successfully")
+        }else{
+          alert("Profile couldn't be updated at this time, try again")
+        }
+    }catch(err){
+      alert("Network Error,Try Again")
+      console.log(err)
+    }
   };
 
   const handleNavigate = () => {
@@ -77,25 +153,25 @@ export default function EditProfile({ navigation,route }) {
   };
 
   let profilePic;
-  if (!avatar && !editData?.avatar) {
+  if (!editData?.avatar && !userProfile?.avatar) {
     profilePic = {
       uri: "https://plus.unsplash.com/premium_photo-1670148434900-5f0af77ba500?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8c3BsYXNofGVufDB8fDB8fHww",
     };
   } else if (editData?.avatar) {
     profilePic = { uri: editData?.avatar };
-  } else {
-    profilePic = { uri: avatar?.url };
+  } else{
+    profilePic = { uri: userProfile?.avatar?.url }
   }
 
   let coverPic;
-  if (!coverPhoto && !editData?.coverPhoto) {
+  if (!editData?.coverPhoto && !userProfile?.coverPhoto) {
     coverPic = {
       uri: "https://plus.unsplash.com/premium_photo-1670148434900-5f0af77ba500?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8c3BsYXNofGVufDB8fDB8fHww",
     };
   } else if (editData?.coverPhoto) {
     coverPic = { uri: editData?.coverPhoto };
-  } else {
-    coverPic = { uri: coverPhoto?.url };
+  }else{
+    coverPic = { uri:userProfile?.coverPhoto?.url }
   }
 
   return (
@@ -187,7 +263,7 @@ export default function EditProfile({ navigation,route }) {
             />
           </View>
         </View>
-        {loading ? (
+        {updating ? (
           <ActivityIndicator />
         ) : (
           <CustomButton buttonLabel={"Update"} onPress={handleUpdateProfile} />

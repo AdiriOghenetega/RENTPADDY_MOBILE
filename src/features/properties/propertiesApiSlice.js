@@ -52,11 +52,11 @@ export const propertiesApiSlice = apiSlice.injectEndpoints({
     saveProperty: builder.mutation({
         invalidatesTags: ["savedProperty"],
         query: (credentials) => {
-            console.log(credentials)
+            console.log(credentials,"credentials")
             return {
                 url: `/saved`,
                 method: 'POST',
-                body: credentials
+                body: {propertyId:credentials}
               }
         }
     }),

@@ -19,7 +19,9 @@ import BookedList from "../../components/propertyComponents/bookedList";
 import MyBookedListComponent from "../../components/propertyComponents/myBookedList";
 import colors from "../../configs/colors";
 import { logOut } from "../../features/auth/authSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
+import { selectCurrentUser } from "../../features/auth/authSlice";
+import { useGetuserProfileQuery } from "../../features/user/userApiSlice";
 
 const { width, height } = Dimensions.get("window");
 
@@ -28,15 +30,23 @@ export default function Profile({ navigation, route }) {
   const dispatch = useDispatch();
 
   const routeName = route?.params?.routeName
+
+  const userInfo = useSelector(selectCurrentUser)
+  const {data:user,isLoading} = useGetuserProfileQuery({userId:userInfo._id})
   
   const [isLocationEnabled, setIsLocationEnabled] = useState(false); 
+  
+if(isLoading){
+  return 
+}
+
+  const {name,email,avatar} = user
+  const {  bookingHistory } = mockUserData;
+
 
   const toggleLocationSwitch = () => {
     setIsLocationEnabled(!isLocationEnabled); // Update state on toggle
   };
-
-  const { name, email, bookingHistory, avatar } = mockUserData;
- 
 
   const rightHeader = {
     exists: true,

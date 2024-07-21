@@ -21,6 +21,7 @@ import { FontAwesome } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useRegisterMutation } from "../../features/auth/authApiSlice";
 import { EXPO_PUBLIC_BASE_URL } from "@env";
+import * as FileSystem from 'expo-file-system';
 
 const { height, width } = Dimensions.get("window");
 
@@ -49,17 +50,30 @@ export default function RegisterScreen({ navigation }) {
     });
   };
 
+  
   const handleRegister = async () => {
+    
     const formdata = new FormData();
+
+    let fileInfo = await FileSystem.getInfoAsync(formData.avatar)
+    if(!fileInfo.exists){
+      alert("Something went wrong while uploading image")
+      return
+    }
+    let fileUri = fileInfo.uri
+    let fileName = fileUri.split("/").pop();
+    let fileType = fileName?.split(".").pop();
+    const mimeType = `image/${fileType}`;
+
     formdata.append("name", formData.name);
     formdata.append("username", formData.username);
     formdata.append("password", formData.password);
     formdata.append("email", formData.email);
     formdata.append("mobile", formData.mobile);
     formdata.append("avatar", {
-      name: new Date() + "_avatar",
-      uri: formData.avatar,
-      type: "image/jpg",
+      name: fileName,
+      uri: fileUri,
+      type: mimeType,
     })
 
     try {

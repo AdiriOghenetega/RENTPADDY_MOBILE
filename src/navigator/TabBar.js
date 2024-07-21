@@ -139,7 +139,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     width: width * 0.95,
     alignSelf: "center",
-   
   },
   tabContainer: {
     height: 70,

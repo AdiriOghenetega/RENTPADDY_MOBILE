@@ -20,7 +20,6 @@ import * as ImagePicker from "expo-image-picker";
 import SelectDropdown from "react-native-select-dropdown";
 import { AntDesign, Feather, MaterialIcons } from "@expo/vector-icons";
 import * as Location from "expo-location";
-import { globalStyles } from "../../styles/globalStyles";
 import CustomHr from "../../customComponents/CustomHr";
 import {
   useUploadPropertyMutation,
@@ -29,6 +28,7 @@ import {
 } from "../../features/properties/propertiesApiSlice";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../features/auth/authSlice";
+import * as FileSystem from 'expo-file-system';
 
 export default function UploadPropertyForm({
   handleToogleModal,
@@ -237,15 +237,25 @@ export default function UploadPropertyForm({
     isEdit && formdata.append("propertyId", editPropertyId);
     if (images?.length > 0) {
       for (let i = 0; i < images?.length; i++) {
+        let fileInfo = await FileSystem.getInfoAsync(images[i])
+        if(!fileInfo.exists){
+          alert("Something went wrong while uploading image")
+          return
+        }
+        let fileUri = fileInfo.uri
+        let fileName = fileUri.split("/").pop();
+        let fileType = fileName?.split(".").pop();
+        const mimeType = `image/${fileType}`;
         formdata.append("images", {
-          name: new Date() + "_image" + i,
-          uri: images[i],
-          type: "image/jpg",
+          name: fileName,
+          uri: fileUri ,
+          type: mimeType,
         });
       }
     }
 
     if (isEdit) {
+      console.log(images)
       try {
         const res = await updateProperty({
           userId: userInfo?._id,

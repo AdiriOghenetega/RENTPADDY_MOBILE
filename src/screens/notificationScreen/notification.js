@@ -46,6 +46,7 @@ export default function Notification({ navigation,route }) {
 
   // Listen for incoming notifications
   socket.on(`notification_${userInfo._id}`, (notification) => {
+    console.log(notification,"notification")
     // Update the notifications state with the new notification
     setNotifications((prevNotifications) => [
       notification,

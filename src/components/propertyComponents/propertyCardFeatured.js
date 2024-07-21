@@ -14,6 +14,7 @@ import { selectCurrentUser } from "../../features/auth/authSlice";
 import { useSelector } from "react-redux";
 import { useLikePropertyMutation,useGetPropertyReviewsQuery } from "../../features/properties/propertiesApiSlice";
 import { calculateAverageRating } from "../../utils/averageRating";
+import { numberWithCommas } from "../../utils/numbersWithComma";
 
 export default function PropertyCardFeatured({
   _id,
@@ -85,7 +86,7 @@ export default function PropertyCardFeatured({
       </View>
       <View style={[styles.detailsContainer, globalStyles.shadowContainer]}>
         <View style={styles.priceContainer}>
-          <Text style={styles.price}>₦{price}</Text>
+          <Text style={styles.price}>₦{numberWithCommas(price)}</Text>
           <TouchableOpacity style={styles.iconContainer} onPress={handleLike}>
             {liking ? (
               <ActivityIndicator size={"small"} color={colors.primary} />

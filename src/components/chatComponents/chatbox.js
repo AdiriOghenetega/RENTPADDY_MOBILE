@@ -42,7 +42,7 @@ export default function Chatbox({
 
   const userInfo = useSelector(selectCurrentUser);
   const notificationIdentifier = useSelector(selectNotificationIdentifier);
-  console.log(notificationIdentifier,"id")
+  
   const {data : chatMessages} = useGetChatMessagesQuery({chatId:chat,userId:userInfo._id});
   const {data : notificationData} = useGetNotificationsQuery({userId:userInfo?._id});
   const [markAsRead] = useMarkAsReadMutation();
@@ -67,12 +67,14 @@ export default function Chatbox({
 
 //check notification data and mark as read for this chat notification
 useEffect(()=>{
+  console.log(notificationData)
   let newNotification = notificationData?.notifications[0]
   let chatId = newNotification?.link?.split("/")[2]
   let notificationId = newNotification?._id
   if(chatId === chat){
     handleMarkAsRead(notificationId)
   }
+
 },[notificationData])
   
   const io_link = EXPO_PUBLIC_BASE_URL;
@@ -97,6 +99,7 @@ useEffect(()=>{
   useEffect(() => {
     // Listen for incoming messages
     socket.current.on("new-message", (message) => {
+      console.log("new message")
       setMessages((prevMessages) => [...prevMessages, message]);
     });
 
@@ -121,7 +124,7 @@ useEffect(()=>{
     };
 
     if (chat !== null) fetchMessages();
-  }, [chat, userInfo._id, chatMessages,notificationIdentifier]); // Include userInfo._id in the dependencies array
+  }, [chat, userInfo._id, chatMessages]); // Include userInfo._id in the dependencies array
 
   // Always scroll to last Message
   useEffect(() => {

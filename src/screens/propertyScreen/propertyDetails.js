@@ -29,6 +29,7 @@ import { useCreateChatMutation } from "../../features/chat/chatApiSlice";
 import { selectCurrentUser } from "../../features/auth/authSlice";
 import { useSelector } from "react-redux";
 import { calculateAverageRating } from "../../utils/averageRating";
+import { numberWithCommas } from "../../utils/numbersWithComma";
 
 const { width, height } = Dimensions.get("window");
 
@@ -287,7 +288,7 @@ export default function PropertyDetails({ navigation, route }) {
                   {reviewsData?.length} Reviews
                 </Text>
               </TouchableOpacity>
-              <Text style={styles.price}>₦{price}</Text>
+              <Text style={styles.price}>₦{numberWithCommas(price)}</Text>
               <View style={globalStyles.customHr}></View>
               <View style={styles.descriptionContainer}>
                 <Text style={styles.descriptionTitle}>Description</Text>

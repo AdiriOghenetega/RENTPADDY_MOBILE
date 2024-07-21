@@ -41,7 +41,8 @@ export const apiSlice = createApi({
     "chatMessages",
     "chatusers",
     "notificationList",
-    "notificationCount"
+    "notificationCount",
+    "userProfile"
   ],
   endpoints: (builder) => ({}),
 });
