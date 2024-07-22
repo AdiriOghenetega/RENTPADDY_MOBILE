@@ -2,9 +2,9 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native'
 import colors from '../configs/colors'
 import { AntDesign } from '@expo/vector-icons';
 
-const CustomButton =({buttonLabel, onPress, icon,customStyle,customLabelStyle}) => {
+const CustomButton =({buttonLabel, onPress, icon,customStyle,customLabelStyle,customContainerStyle}) => {
   return (
-    <View style={[styles.container]}>
+    <View style={[styles.container,customContainerStyle]}>
       <TouchableOpacity 
           style={[styles.buttonContainer,customStyle]}
           onPress={onPress}
