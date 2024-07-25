@@ -8,34 +8,32 @@ import BookedPropertyDetails from "../../screens/propertyScreen/bookedPropertyDe
 const {height,width} = Dimensions.get("window")
 
 export default function PropertyCardBooking({
-  propertyName,
-  location,
-  checkInDate,
-  checkOutDate,
-  images,
+  property,
+  rentedAt,
+  rentedUntil,
   status,
-  myBooking,
-  id,
   navigation,
-  routeName
+  routeName,
+  myBooking
 }) {
+
+  const {title,images} = property
 
 const handleNavigateToBookingDetails = () => {
   navigation.navigate("BookedPropertyDetails", {
-    ...mockProperties[id],routeName,
-    myBooking
+    id:_id,routeName,myBooking
 })
 }
 
   return (
     <TouchableOpacity style={styles.container} onPress={handleNavigateToBookingDetails}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: images[0] }} style={styles.image} />
+        <Image source={{ uri: images[0]?.url }} style={styles.image} />
       </View>
       <View style={styles.detailsContainer}>
-        <Text style={styles.propertyNameText}>{propertyName}</Text>
-        <Text style={styles.checkInDate}>Booked on : {checkInDate}</Text>
-        <Text style={styles.checkInDate}>{status === "expired" ? "Expired":"Expires"} on : {checkInDate}</Text>
+        <Text style={styles.propertyNameText}>{title}</Text>
+        <Text style={styles.checkInDate}>Booked on : {rentedAt || "N/A"}</Text>
+        <Text style={styles.checkInDate}>{status === "expired" ? "Expired":"Expires"} on : {rentedUntil || "N/A"}</Text>
         <View style={styles.statusContainer}>
         <Text
           style={[

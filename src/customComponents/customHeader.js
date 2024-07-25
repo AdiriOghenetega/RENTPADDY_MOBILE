@@ -37,7 +37,7 @@ export default function CustomHeader({
 
   function fetchNotificationCount(){
     if(notificationCountData){
-      setNotificationCount(notificationCountData.unreadCount)
+      setNotificationCount(notificationCountData?.unreadCount)
     }
   }
 

@@ -42,7 +42,9 @@ export const apiSlice = createApi({
     "chatusers",
     "notificationList",
     "notificationCount",
-    "userProfile"
+    "userProfile",
+    "userRentedHistory",
+    "userOwnRentedHistory"
   ],
   endpoints: (builder) => ({}),
 });

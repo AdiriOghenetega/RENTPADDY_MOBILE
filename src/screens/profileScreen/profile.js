@@ -10,6 +10,7 @@ import {
   Dimensions,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import CustomHeader from "../../customComponents/customHeader";
@@ -26,6 +27,8 @@ import {
   useGetuserProfileQuery,
   useDeleteUserMutation,
   useDeleteUserProfileMutation,
+  useGetUserRentedHistoryQuery,
+  useGetUserOwnRentedHistoryQuery
 } from "../../features/user/userApiSlice";
 import CustomButton from "../../customComponents/CustomButton";
 
@@ -38,12 +41,17 @@ export default function Profile({ navigation, route }) {
 
   const userInfo = useSelector(selectCurrentUser);
   const { data: user, isLoading } = useGetuserProfileQuery({
-    userId: userInfo._id,
+    userId: userInfo?._id,
   });
+  const {data: bookingHistory,isloading:bookingHistoryLoading} = useGetUserRentedHistoryQuery({userId:userInfo?._id});
+  const {data: ownBookingHistory,isloading:ownBookingHistoryLoading} = useGetUserOwnRentedHistoryQuery({userId:userInfo?._id});
+  console.log(bookingHistory,"bookinghistory")
+  console.log(ownBookingHistory,"ownbookinghistory")
+
   const [deleteProfile, { isLoading: deletingProfile }] =
     useDeleteUserMutation();
   const [deleteProfileData, { isLoading: deletingProfileData }] =
-    useDeleteUserProfileMutation;
+    useDeleteUserProfileMutation();
 
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
 
@@ -51,8 +59,9 @@ export default function Profile({ navigation, route }) {
     return;
   }
 
-  const { name, email, avatar } = user;
-  const { bookingHistory } = mockUserData;
+  const name = user?.name;
+  const email = user?.email;
+  const avatar = user?.avatar;
 
   const toggleLocationSwitch = () => {
     setIsLocationEnabled(!isLocationEnabled); // Update state on toggle
@@ -173,7 +182,7 @@ export default function Profile({ navigation, route }) {
           <View style={styles.historyContainer}>
             <View style={globalStyles.historyHeader}>
               <Text style={[globalStyles.headerText, { fontSize: 16 }]}>
-                Recent Properties You Rented
+                Recent Properties Rented From You
               </Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate("BookHistory")}
@@ -183,7 +192,7 @@ export default function Profile({ navigation, route }) {
             </View>
 
             <BookedList
-              data={bookingHistory.splice(0, 2)}
+              data={bookingHistory?.length > 3 ? bookingHistory?.splice(0, 2): bookingHistory}
               navigation={navigation}
               routeName={route?.name}
             />
@@ -191,7 +200,7 @@ export default function Profile({ navigation, route }) {
           <View style={styles.historyContainer}>
             <View style={globalStyles.historyHeader}>
               <Text style={[globalStyles.headerText, { fontSize: 16 }]}>
-                Recent Properties Rented From You
+                Recent Properties You Rented
               </Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate("MyBookedList")}
@@ -201,7 +210,7 @@ export default function Profile({ navigation, route }) {
             </View>
 
             <MyBookedListComponent
-              data={bookingHistory.splice(0, 2)}
+              data={ownBookingHistory?.length > 3 ? ownBookingHistory?.splice(0, 2): ownBookingHistory}
               navigation={navigation}
               routeName={route?.name}
             />
@@ -327,26 +336,38 @@ export default function Profile({ navigation, route }) {
           </View>
           <View style={styles.accountInfoContainer}>
             <View style={styles.deleteContainer}>
-              <CustomButton
-                buttonLabel={"Delete Profile Data"}
-                customContainerStyle={styles.customButtonContainerStyle}
-                customStyle={[
-                  styles.customButtonStyle,
-                  { backgroundColor: colors.lightgray },
-                ]}
-                customLabelStyle={styles.customButtonLabelStyle}
-                onPress={handleEraseProfileDataPrompt}
-              />
-              <CustomButton
-                buttonLabel={"Delete Profile"}
-                customContainerStyle={styles.customButtonContainerStyle}
-                customStyle={[
-                  styles.customButtonStyle,
-                  { backgroundColor: colors.gray },
-                ]}
-                customLabelStyle={styles.customButtonLabelStyle}
-                onPress={handleDeleteProfilePrompt}
-              />
+              {deletingProfileData ? (
+                <View style={{ marginVertical: 15 }}>
+                  <ActivityIndicator size="small" color={colors.primary} />
+                </View>
+              ) : (
+                <CustomButton
+                  buttonLabel={"Delete Profile Data"}
+                  customContainerStyle={styles.customButtonContainerStyle}
+                  customStyle={[
+                    styles.customButtonStyle,
+                    { backgroundColor: colors.lightgray },
+                  ]}
+                  customLabelStyle={styles.customButtonLabelStyle}
+                  onPress={handleEraseProfileDataPrompt}
+                />
+              )}
+              {deletingProfile ? (
+                <View style={{ marginVertical: 15 }}>
+                  <ActivityIndicator size="small" color={colors.primary} />
+                </View>
+              ) : (
+                <CustomButton
+                  buttonLabel={"Delete Profile"}
+                  customContainerStyle={styles.customButtonContainerStyle}
+                  customStyle={[
+                    styles.customButtonStyle,
+                    { backgroundColor: colors.gray },
+                  ]}
+                  customLabelStyle={styles.customButtonLabelStyle}
+                  onPress={handleDeleteProfilePrompt}
+                />
+              )}
             </View>
           </View>
         </View>
