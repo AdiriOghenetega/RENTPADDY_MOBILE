@@ -52,6 +52,11 @@ export default function RegisterScreen({ navigation }) {
 
   
   const handleRegister = async () => {
+
+    if(formData.password !== formData.confirmpassword){
+      alert("passwords do not match")
+      return
+    }
     
     const formdata = new FormData();
 

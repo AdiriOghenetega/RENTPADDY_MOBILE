@@ -21,7 +21,7 @@ export default function BookedList({ data,navigation,routeName }) {
       ) : (
         <View style={styles.emptyHistoryContainer}>
           <Text style={styles.emptyHistoryText}>
-            There is no rental history, rent now.
+            There is no rental history.
           </Text>
         </View>
       )}

@@ -19,7 +19,7 @@ export default function MyBookedListComponent({data,navigation,routeName}) {
       ) : (
         <View style={styles.emptyHistoryContainer}>
           <Text style={styles.emptyHistoryText}>
-            There is no rental history
+            There is no rental history, rent now.
           </Text>
         </View>
       )}

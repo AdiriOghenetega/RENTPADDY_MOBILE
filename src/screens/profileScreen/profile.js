@@ -45,8 +45,8 @@ export default function Profile({ navigation, route }) {
   });
   const {data: bookingHistory,isloading:bookingHistoryLoading} = useGetUserRentedHistoryQuery({userId:userInfo?._id});
   const {data: ownBookingHistory,isloading:ownBookingHistoryLoading} = useGetUserOwnRentedHistoryQuery({userId:userInfo?._id});
-  console.log(bookingHistory,"bookinghistory")
-  console.log(ownBookingHistory,"ownbookinghistory")
+  // console.log(bookingHistory,"bookinghistory")
+  // console.log(ownBookingHistory,"ownbookinghistory")
 
   const [deleteProfile, { isLoading: deletingProfile }] =
     useDeleteUserMutation();

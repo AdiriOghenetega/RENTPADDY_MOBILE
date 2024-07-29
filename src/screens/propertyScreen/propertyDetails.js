@@ -14,7 +14,12 @@ import {
 import React, { useState, useEffect } from "react";
 import CustomHeader from "../../customComponents/customHeader";
 import CustomButton from "../../customComponents/CustomButton";
-import { Octicons, SimpleLineIcons, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  Octicons,
+  SimpleLineIcons,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import colors from "../../configs/colors";
 import { globalStyles } from "../../styles/globalStyles";
 import {
@@ -26,7 +31,13 @@ import {
   useGetPropertyReviewsQuery,
 } from "../../features/properties/propertiesApiSlice";
 import { useCreateChatMutation } from "../../features/chat/chatApiSlice";
-import { useAddOwnRentedHistoryMutation,useAddRentedHistoryMutation,useGetUserOwnRentedHistoryQuery } from "../../features/user/userApiSlice";
+import {
+  useAddOwnRentedHistoryMutation,
+  useAddRentedHistoryMutation,
+  useGetUserOwnRentedHistoryQuery,
+  useRemoveRentedHistoryMutation,
+  useRemoveOwnRentedHistoryMutation,
+} from "../../features/user/userApiSlice";
 import { selectCurrentUser } from "../../features/auth/authSlice";
 import { useSelector } from "react-redux";
 import { calculateAverageRating } from "../../utils/averageRating";
@@ -42,18 +53,25 @@ export default function PropertyDetails({ navigation, route }) {
   const { data: property } = useGetPropertyQuery(propertyId);
   const { data: reviewsData } = useGetPropertyReviewsQuery(propertyId);
   const { data: savedProperties } = useGetSavedPropertiesQuery();
-  const {data: ownBookingHistory,isloading:ownBookingHistoryLoading} = useGetUserOwnRentedHistoryQuery({userId:userInfo?._id});
+  const { data: ownBookingHistory, isloading: ownBookingHistoryLoading } =
+    useGetUserOwnRentedHistoryQuery({ userId: userInfo?._id });
   const [saveProperty, { isLoading: saving }] = useSavePropertyMutation();
   const [unSaveProperty, { isLoading: unsaving }] = useUnSavePropertyMutation();
   const [likeProperty, { isLoading: liking }] = useLikePropertyMutation();
   const [createChat, { isLoading: chatting }] = useCreateChatMutation();
-  const [addOwnRentedHistory, {isLoading:addingOwnHistory}] = useAddOwnRentedHistoryMutation()
-  const [addRentedHistory, {isLoading:addingHistory}] = useAddRentedHistoryMutation()
-
+  const [addOwnRentedHistory, { isLoading: addingOwnHistory }] =
+    useAddOwnRentedHistoryMutation();
+  const [addRentedHistory, { isLoading: addingHistory }] =
+    useAddRentedHistoryMutation();
+  const [removeRentedHistory, { isLoading: removingHistory }] =
+    useRemoveRentedHistoryMutation();
+  const [removeOwnRentedHistory, { isLoading: removingOwnHistory }] =
+    useRemoveOwnRentedHistoryMutation();
 
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [rented,setRented] = useState(false)
+  const [rented, setRented] = useState(false);
+  console.log(rented);
 
   useEffect(() => {
     let savedProp =
@@ -75,12 +93,17 @@ export default function PropertyDetails({ navigation, route }) {
     }
   }, [property, liking]);
 
-  useEffect(()=>{
-    let isRented = ownBookingHistory?.find(item=>item.property._id === propertyId)
-     if(isRented){
-      setRented(true)
-     }
-  },[ownBookingHistory])
+  useEffect(() => {
+    let isRented = ownBookingHistory?.find(
+      (item) => item.property._id === propertyId
+    );
+    console.log(isRented, "isRented ?");
+    if (isRented) {
+      setRented(true);
+    } else {
+      setRented(false);
+    }
+  }, [ownBookingHistory]);
 
   if (!property) {
     return (
@@ -125,7 +148,7 @@ export default function PropertyDetails({ navigation, route }) {
       try {
         if (saved) {
           const res = await unSaveProperty({ propertyId }).unwrap();
-          
+
           if (res?.message === "Property removed from saved list") {
             alert("Removed from saved list");
           } else {
@@ -198,7 +221,7 @@ export default function PropertyDetails({ navigation, route }) {
             participants: [owner?._id, userInfo?._id],
           },
         }).unwrap();
-       
+
         if (res?.chat?.participants?.length > 1) {
           navigation.navigate("Message", {
             chatId: res.chat._id,
@@ -213,24 +236,53 @@ export default function PropertyDetails({ navigation, route }) {
     };
 
     const handleAddRentedPropertyHistory = async () => {
-       try{
-         const res = await addOwnRentedHistory({userId:userInfo?._id,body:{
-          propertyId, rentedAt:"", rentedUntil:"",status:"pending"
-         }}).unwrap()
+      try {
+        const res = await addOwnRentedHistory({
+          userId: userInfo?._id,
+          body: {
+            propertyId,
+            rentedAt: "",
+            rentedUntil: "",
+            status: "pending",
+            renter: userInfo?._id,
+          },
+        }).unwrap();
         //  console.log(res)
-         const res2 = await addRentedHistory({userId:owner?._id,body:{
-          propertyId, rentedAt:"", rentedUntil:"",status:"pending"
-         }}).unwrap()
+        const res2 = await addRentedHistory({
+          userId: owner?._id,
+          body: {
+            propertyId,
+            rentedAt: "",
+            rentedUntil: "",
+            status: "pending",
+            renter: userInfo?._id,
+          },
+        }).unwrap();
         //  console.log(res2)
-       }catch(err){
-        alert("Network Error")
-        console.log(err)
-       }
-    }
+      } catch (err) {
+        alert("Network Error");
+        console.log(err);
+      }
+    };
 
-    const handleRemoveRentedPropertyHistory = async ()=>{}
+    const handleRemoveRentedPropertyHistory = async () => {
+      try {
+        const res = await removeOwnRentedHistory({
+          userId: userInfo?._id,
+          body: { propertyId },
+        }).unwrap();
 
-    const handleShareProperty = ()=>{}
+        const res2 = await removeRentedHistory({
+          userId: owner?._id,
+          body: { propertyId },
+        }).unwrap();
+      } catch (err) {
+        alert("Network Error,Try Again");
+        console.log(err);
+      }
+    };
+
+    const handleShareProperty = () => {};
 
     return (
       <SafeAreaView style={styles.container}>
@@ -292,8 +344,8 @@ export default function PropertyDetails({ navigation, route }) {
 
             <View style={styles.detailsContainer}>
               <View style={styles.titleContainer}>
-              <Text style={styles.title}>{title}</Text>
-              <Text style={styles.status}>Available</Text>
+                <Text style={styles.title}>{title}</Text>
+                <Text style={styles.status}>Available</Text>
               </View>
               <View style={styles.locationContainer}>
                 <SimpleLineIcons
@@ -327,16 +379,38 @@ export default function PropertyDetails({ navigation, route }) {
               <Text style={styles.price}>₦{numberWithCommas(price)}</Text>
               <View style={globalStyles.customHr}></View>
               <View style={styles.sharePropertyContainer}>
-               {addingHistory || addingOwnHistory ?  <ActivityIndicator
-                        size={"small"}
-                        color={colors.primary}
-                      />:<TouchableOpacity style={styles.rentedList} onPress={rented ? handleAddRentedPropertyHistory:handleRemoveRentedPropertyHistory}>
-                 <Text style={styles.rentedListText}>{rented ? "Remove Property from Rented List":"Add Property To Rented List"}</Text>
-               </TouchableOpacity>}
-               <TouchableOpacity style={styles.shareIconContainer} onPress={handleShareProperty}>
-               <MaterialCommunityIcons name="share-outline" size={24} color="black" />
-               <Text style={styles.shareText}>Share</Text>
-               </TouchableOpacity>
+                {addingHistory ||
+                addingOwnHistory ||
+                removingHistory ||
+                removingOwnHistory ? (
+                  <ActivityIndicator size={"small"} color={colors.primary} />
+                ) : (
+                  <TouchableOpacity
+                    style={styles.rentedList}
+                    onPress={
+                      !rented
+                        ? handleAddRentedPropertyHistory
+                        : handleRemoveRentedPropertyHistory
+                    }
+                  >
+                    <Text style={styles.rentedListText}>
+                      {rented
+                        ? "Remove Property from Rented List"
+                        : "Add Property To Rented List"}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity
+                  style={styles.shareIconContainer}
+                  onPress={handleShareProperty}
+                >
+                  <MaterialCommunityIcons
+                    name="share-outline"
+                    size={24}
+                    color="black"
+                  />
+                  <Text style={styles.shareText}>Share</Text>
+                </TouchableOpacity>
               </View>
               <View style={globalStyles.customHr}></View>
               <View style={styles.descriptionContainer}>
@@ -428,18 +502,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 20,
   },
-  titleContainer:{
-   flexDirection:"row",
-   alignItems:"center",
-   justifyContent:"space-between",
-   marginTop :10
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 10,
   },
   title: {
     color: colors.primary,
     fontSize: 22,
   },
-  status:{
-    color : "#44E37A"
+  status: {
+    color: "#44E37A",
   },
   locationText: {
     fontSize: 12,
@@ -541,32 +615,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  sharePropertyContainer:{
-    flexDirection:"row",
-    alignItems :"center",
-    justifyContent : "space-between"
+  sharePropertyContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-  shareIconContainer:{
-    paddingVertical:5,
-    paddingHorizontal:10,
-    backgroundColor:colors.lightgray,
-    borderRadius : 10,
-    flexDirection:"row",
-    alignItems:"center",
-    justifyContent:"space-between"
+  shareIconContainer: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    backgroundColor: colors.lightgray,
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-  shareText:{
-    fontWeight : "600"
+  shareText: {
+    fontWeight: "600",
   },
-  rentedList:{
-    paddingVertical:10,
-    paddingHorizontal:15,
-    borderRadius : 10,
-    backgroundColor:colors.secondary,
+  rentedList: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    backgroundColor: colors.secondary,
   },
-  rentedListText:{
-    fontWeight : "600",
-    fontSize:14,
-    color:colors.white
-  }
+  rentedListText: {
+    fontWeight: "600",
+    fontSize: 14,
+    color: colors.white,
+  },
 });

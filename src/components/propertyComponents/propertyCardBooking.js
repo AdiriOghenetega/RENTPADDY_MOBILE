@@ -1,14 +1,17 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, Dimensions,Modal } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Image, Dimensions,ActivityIndicator, Modal } from "react-native";
 import React,{useState} from "react";
 import colors from "../../configs/colors";
-import { mockProperties } from "../../data/mockData";
-import BookedPropertyDetails from "../../screens/propertyScreen/bookedPropertyDetails";
+import { useRemoveRentedHistoryMutation,useUpdateRentedStatusMutation } from "../../features/user/userApiSlice";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "../../features/auth/authSlice";
+import AcceptRentalModal from "../profileComponents/acceptRentalModal";
 
 
 const {height,width} = Dimensions.get("window")
 
 export default function PropertyCardBooking({
   property,
+  renter,
   rentedAt,
   rentedUntil,
   status,
@@ -16,6 +19,12 @@ export default function PropertyCardBooking({
   routeName,
   myBooking
 }) {
+
+  const userInfo = useSelector(selectCurrentUser);
+
+  const [removeRentedHistory,{isLoading:removingHistory}] = useRemoveRentedHistoryMutation()
+
+  const [openAcceptModal,setAcceptModal] = useState(false)
 
   const {title,images} = property
 
@@ -25,8 +34,29 @@ const handleNavigateToBookingDetails = () => {
 })
 }
 
+const toogleModal = () => {
+  setAcceptModal(!openAcceptModal)
+}
+
+const handleAcceptBooking = async () => {
+  
+}
+
+const handleDeclineBooking = async () => {
+   try{
+    const res = await removeRentedHistory({userId:userInfo?._id,body:{propertyId:property?._id}})
+    console.log(res)
+   }catch(err){
+    alert("Network Error, Try Again")
+    console.log(err)
+   }
+}
+
   return (
     <TouchableOpacity style={styles.container} onPress={handleNavigateToBookingDetails}>
+       <Modal visible={openAcceptModal} animationType="slide" transparent={true}>
+          <AcceptRentalModal property={property} toogleModal={toogleModal} renter={renter} />
+        </Modal>
       <View style={styles.imageContainer}>
         <Image source={{ uri: images[0]?.url }} style={styles.image} />
       </View>
@@ -43,6 +73,14 @@ const handleNavigateToBookingDetails = () => {
         >
           {status}
         </Text>
+        {!myBooking && <View style={styles.bookPromptContainer}>
+             {removingHistory ? <ActivityIndicator size={"small"} color={colors.primary} style={{marginHorizontal:10}} />:<TouchableOpacity onPress={handleDeclineBooking}>
+              <Text style={styles.declineBook}>Decline</Text>
+             </TouchableOpacity>}
+             <TouchableOpacity onPress={toogleModal}>
+             <Text style={styles.acceptBook}>Accept</Text>
+             </TouchableOpacity>
+          </View>}
         {(status === "expired" && !myBooking) && <TouchableOpacity>
           <Text style={styles.bookAgain}>Book again</Text>
         </TouchableOpacity>}
@@ -96,5 +134,17 @@ const styles = StyleSheet.create({
     color:colors.primary,
     fontSize:14,
     fontWeight:"600",
+  },
+  bookPromptContainer:{
+  flexDirection:"row",
+  alignItems:"center",
+  justifyContent:"space-between"
+  },
+  acceptBook:{
+   color: "#44E37A"
+  },
+  declineBook:{
+   color: colors.red,
+   marginRight:15
   }
 });
