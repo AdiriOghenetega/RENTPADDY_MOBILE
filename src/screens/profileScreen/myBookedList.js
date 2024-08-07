@@ -2,18 +2,21 @@ import { StyleSheet, Text, View, SafeAreaView, FlatList,Dimensions } from "react
 import React from "react";
 import CustomHeader from "../../customComponents/customHeader";
 import colors from "../../configs/colors";
-import PropertyCardBooking from "../../components/propertyComponents/propertyCardBooking";
+import {useSelector} from "react-redux"
+import { selectCurrentUser } from "../../features/auth/authSlice";
 import MyBookedListComponent from "../../components/propertyComponents/myBookedList";
-import { mockUserData } from "../../data/mockData";
+import { useGetUserOwnRentedHistoryQuery } from "../../features/user/userApiSlice";
 
 const { width, height } = Dimensions.get("window");
 
 export default function MyBookedList({ navigation,route }) {
 
   const routeName = route?.params?.routeName
+
+  const userInfo = useSelector(selectCurrentUser)
   
-  const { bookingHistory } = mockUserData;
-  // console.log(mockUserData,"see all")
+  const {data: ownBookingHistory,isloading:ownBookingHistoryLoading} = useGetUserOwnRentedHistoryQuery({userId:userInfo?._id});
+  
   const handleNavigate = () => {
     navigation.navigate(routeName || "Profile");
   };
@@ -26,7 +29,7 @@ export default function MyBookedList({ navigation,route }) {
         handleNotificationNavigate={()=>navigation.navigate("Notification",{routeName:route?.name})}
         isNavigate={true}
       />
-      <MyBookedListComponent data={bookingHistory} navigation={navigation} routeName={route?.name} />
+      <MyBookedListComponent data={ownBookingHistory} navigation={navigation} routeName={route?.name} />
     </SafeAreaView>
   );
 }

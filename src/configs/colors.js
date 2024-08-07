@@ -10,7 +10,7 @@ const colors = {
   white: "#ffffff",
   blueFaded: "#8D8FAD",
   purple: "#2127b9",
-  lightpurple: "#8a86d0",
+  lightpurple: "#B490FF",
   lightbrown: "#D8A008",
   lightgold: "#FF9900",
   red: "#FF0000",
@@ -18,6 +18,8 @@ const colors = {
   secondaryOffWhite: "#F5F5F5",
   darkgray: "#0c0c0c",
   tomato: "#ff5252",
+  green: "#44E37A",
+  pink: "#FF29A6",
 };
 
 export default colors;

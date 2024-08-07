@@ -23,6 +23,34 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ["userOwnRentedHistory"],
     }),
+    sendNotificationBookRequest: builder.mutation({
+      query: (credentials) => ({
+        url: "/users/send/notification/request",
+        method: "POST",
+        body: credentials?.body,
+      }),
+    }),
+    sendNotificationBookAccept: builder.mutation({
+      query: (credentials) => ({
+        url: "/users/send/notification/accept",
+        method: "POST",
+        body: credentials?.body,
+      }),
+    }),
+    sendNotificationBookDecline: builder.mutation({
+      query: (credentials) => ({
+        url: "/users/send/notification/decline",
+        method: "POST",
+        body: credentials?.body,
+      }),
+    }),
+    sendNotificationBookExpired: builder.mutation({
+      query: (credentials) => ({
+        url: "/users/send/notification/expired",
+        method: "POST",
+        body: credentials?.body,
+      }),
+    }),
     updateuser: builder.mutation({
       query: (credentials) => ({
         url: `/users/${credentials?.userId}`,
@@ -41,12 +69,12 @@ export const userApiSlice = apiSlice.injectEndpoints({
     }),
     addOwnRentedHistory: builder.mutation({
       query: (credentials) => {
-        console.log(credentials)
+        console.log(credentials);
         return {
-            url: `/users/own/add/rented/history/${credentials?.userId}`,
-            method: "PATCH",
-            body: credentials?.body,
-          }
+          url: `/users/own/add/rented/history/${credentials?.userId}`,
+          method: "PATCH",
+          body: credentials?.body,
+        };
       },
       invalidatesTags: ["userOwnRentedHistory"],
     }),
@@ -128,4 +156,8 @@ export const {
   useClearRentedHistoryMutation,
   useUpdateOwnRentedStatusMutation,
   useUpdateRentedStatusMutation,
+  useSendNotificationBookRequestMutation,
+  useSendNotificationBookAcceptMutation,
+  useSendNotificationBookDeclineMutation,
+  useSendNotificationBookExpiredMutation
 } = userApiSlice;

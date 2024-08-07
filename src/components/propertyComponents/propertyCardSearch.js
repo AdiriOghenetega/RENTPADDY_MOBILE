@@ -76,9 +76,11 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     margin: 10,
-    width: width - 100,
+    width: width * 0.9,
     alignItems: "center",
     gap: 20,
+    // borderColor:"red",
+    // borderWidth: 1,
   },
   imageContainer: {
     height: 80,
@@ -97,6 +99,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 2,
+    width: "80%",
+    // borderColor:"red",
+    // borderWidth: 1,
   },
   locationText: {
     color: "grey",

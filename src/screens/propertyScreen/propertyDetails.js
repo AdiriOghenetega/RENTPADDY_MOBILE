@@ -37,6 +37,7 @@ import {
   useGetUserOwnRentedHistoryQuery,
   useRemoveRentedHistoryMutation,
   useRemoveOwnRentedHistoryMutation,
+  useSendNotificationBookRequestMutation,
 } from "../../features/user/userApiSlice";
 import { selectCurrentUser } from "../../features/auth/authSlice";
 import { useSelector } from "react-redux";
@@ -67,11 +68,12 @@ export default function PropertyDetails({ navigation, route }) {
     useRemoveRentedHistoryMutation();
   const [removeOwnRentedHistory, { isLoading: removingOwnHistory }] =
     useRemoveOwnRentedHistoryMutation();
+  const [sendNotificationBookRequest, { isLoading: sendingBookRequest }] =
+    useSendNotificationBookRequestMutation();
 
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [rented, setRented] = useState(false);
-  console.log(rented);
 
   useEffect(() => {
     let savedProp =
@@ -97,7 +99,7 @@ export default function PropertyDetails({ navigation, route }) {
     let isRented = ownBookingHistory?.find(
       (item) => item.property._id === propertyId
     );
-    console.log(isRented, "isRented ?");
+
     if (isRented) {
       setRented(true);
     } else {
@@ -123,6 +125,7 @@ export default function PropertyDetails({ navigation, route }) {
       description,
       owner,
       likes,
+      avaliability,
     } = property;
 
     const rating = calculateAverageRating(reviewsData);
@@ -189,7 +192,21 @@ export default function PropertyDetails({ navigation, route }) {
       ),
     };
 
-    const handleBooking = () => {};
+    const handleBooking = async () => {
+      await handleAddRentedPropertyHistory();
+      await handleCreateChat();
+      try {
+        await sendNotificationBookRequest({
+          body: { user: property?.owner?._id, property },
+        }).unwrap();
+      } catch (error) {
+        alert("Network Error. Please try again!");
+        console.log(error);
+      }
+      alert(
+        "Property has been added to rented list. Start a conversation with the owner"
+      );
+    };
 
     const handleGoBack = () => {
       navigation.navigate(routeName || "Home");
@@ -345,7 +362,14 @@ export default function PropertyDetails({ navigation, route }) {
             <View style={styles.detailsContainer}>
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>{title}</Text>
-                <Text style={styles.status}>Available</Text>
+                <Text
+                  style={[
+                    styles.status,
+                    { color: avaliability ? colors.green : colors.red },
+                  ]}
+                >
+                  {avaliability ? "Available" : "Rented"}
+                </Text>
               </View>
               <View style={styles.locationContainer}>
                 <SimpleLineIcons
@@ -379,7 +403,7 @@ export default function PropertyDetails({ navigation, route }) {
               <Text style={styles.price}>₦{numberWithCommas(price)}</Text>
               <View style={globalStyles.customHr}></View>
               <View style={styles.sharePropertyContainer}>
-                {addingHistory ||
+                {/* {addingHistory ||
                 addingOwnHistory ||
                 removingHistory ||
                 removingOwnHistory ? (
@@ -399,7 +423,7 @@ export default function PropertyDetails({ navigation, route }) {
                         : "Add Property To Rented List"}
                     </Text>
                   </TouchableOpacity>
-                )}
+                )} */}
                 <TouchableOpacity
                   style={styles.shareIconContainer}
                   onPress={handleShareProperty}
@@ -459,11 +483,30 @@ export default function PropertyDetails({ navigation, route }) {
                   </TouchableOpacity>
                 </View>
               </View>
-              <CustomButton
-                buttonLabel={"Book Now"}
-                onPress={handleBooking}
-                customStyle={styles.customButtonStyle}
-              />
+              {rented ? (
+                <Text style={styles.rentedText}>
+                  You have requested/rented this property
+                </Text>
+              ) : (
+                <>
+                  {chatting ||
+                  addingHistory ||
+                  addingOwnHistory ||
+                  sendingBookRequest ? (
+                    <ActivityIndicator
+                      size={"small"}
+                      color={colors.primary}
+                      style={{ marginVertical: 10 }}
+                    />
+                  ) : (
+                    <CustomButton
+                      buttonLabel={"Book Now"}
+                      onPress={handleBooking}
+                      customStyle={styles.customButtonStyle}
+                    />
+                  )}
+                </>
+              )}
             </View>
           </View>
         </ScrollView>
@@ -511,10 +554,9 @@ const styles = StyleSheet.create({
   title: {
     color: colors.primary,
     fontSize: 22,
+    width: width * 0.7,
   },
-  status: {
-    color: "#44E37A",
-  },
+  status: {},
   locationText: {
     fontSize: 12,
     color: colors.gray,
@@ -642,5 +684,13 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 14,
     color: colors.white,
+  },
+  rentedText: {
+    fontWeight: "600",
+    fontSize: 14,
+    color: colors.green,
+    padding: 10,
+    paddingTop: 0,
+    alignSelf: "center",
   },
 });

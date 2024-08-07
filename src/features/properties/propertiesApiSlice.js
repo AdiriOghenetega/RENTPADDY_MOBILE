@@ -1,21 +1,41 @@
 import { apiSlice } from "../api/apiSlice";
+import { secureGetItemAsync } from "../../utils/expoSecure";
+
 
 export const propertiesApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getFeaturedProperties: builder.query({
       query: () => "/featured",
       providesTags: ["featuredProperty"],
-      transformResponse: (res) => res.sort((a, b) => b.id - a.id),
+      transformResponse: async (response, meta, arg) => {
+        const user = await secureGetItemAsync("user"); // Access currentUser
+        const filteredProperties = response.filter(
+          (property) => property.owner !== user._id && property.avaliability === true
+        );
+        return filteredProperties.sort((a, b) => b.id - a.id)
+      },
     }),
     getTopProperties: builder.query({
       query: () => "/top-rated",
       providesTags: ["topRatedProperty"],
-      transformResponse: (res) => res.sort((a, b) => b.id - a.id),
+        transformResponse: async (response, meta, arg) => {
+        const user = await secureGetItemAsync("user"); // Access currentUser
+        const filteredProperties = response.filter(
+          (property) => property.owner !== user._id && property.avaliability === true
+        );
+        return filteredProperties.sort((a, b) => b.id - a.id)
+      },
     }),
     getAllProperties: builder.query({
       query: () => "/properties",
       providesTags: ["property"],
-      transformResponse: (res) => res.sort((a, b) => b.id - a.id),
+        transformResponse: async (response, meta, arg) => {
+        const user = await secureGetItemAsync("user"); // Access currentUser
+        const filteredProperties = response.filter(
+          (property) => property.owner !== user._id && property.avaliability === true
+        );
+        return filteredProperties.sort((a, b) => b.id - a.id)
+      },
     }),
     getProperty: builder.query({
       query: (id) => ({

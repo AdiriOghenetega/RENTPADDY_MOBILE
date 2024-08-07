@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     width: 150,
-    height: 70,
+    height: "auto",
     backgroundColor: colors.white,
     borderBottomRightRadius: 7,
     borderBottomLeftRadius: 7,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
   },
   address: {
-    fontSize: 12,
+    fontSize: 10,
     color: colors.gray,
   },
 });

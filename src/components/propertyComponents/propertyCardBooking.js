@@ -1,13 +1,25 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image, Dimensions,ActivityIndicator, Modal } from "react-native";
-import React,{useState} from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  ActivityIndicator,
+  Modal,
+} from "react-native";
+import React, { useState } from "react";
 import colors from "../../configs/colors";
-import { useRemoveRentedHistoryMutation,useUpdateRentedStatusMutation } from "../../features/user/userApiSlice";
+import {
+  useRemoveRentedHistoryMutation,
+  useRemoveOwnRentedHistoryMutation,
+  useSendNotificationBookDeclineMutation,
+} from "../../features/user/userApiSlice";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "../../features/auth/authSlice";
 import AcceptRentalModal from "../profileComponents/acceptRentalModal";
 
-
-const {height,width} = Dimensions.get("window")
+const { height, width } = Dimensions.get("window");
 
 export default function PropertyCardBooking({
   property,
@@ -17,73 +29,140 @@ export default function PropertyCardBooking({
   status,
   navigation,
   routeName,
-  myBooking
+  myBooking,
 }) {
-
   const userInfo = useSelector(selectCurrentUser);
 
-  const [removeRentedHistory,{isLoading:removingHistory}] = useRemoveRentedHistoryMutation()
+  const [removeRentedHistory, { isLoading: removingHistory }] =
+    useRemoveRentedHistoryMutation();
+  const [removeOwnRentedHistory, { isLoading: removingOwnHistory }] =
+    useRemoveOwnRentedHistoryMutation();
+  const [sendNotificationBookDecline, { isLoading: sendingNotification }] =
+    useSendNotificationBookDeclineMutation();
 
-  const [openAcceptModal,setAcceptModal] = useState(false)
+  const [openAcceptModal, setAcceptModal] = useState(false);
 
-  const {title,images} = property
+  const { title, images } = property;
 
-const handleNavigateToBookingDetails = () => {
-  navigation.navigate("BookedPropertyDetails", {
-    id:_id,routeName,myBooking
-})
-}
+  const handleNavigateToBookingDetails = () => {
+    navigation.navigate("BookedPropertyDetails", {
+      routeName,
+      myBooking,
+      propertyId: property?._id,
+      renter,
+      status,
+    });
+  };
 
-const toogleModal = () => {
-  setAcceptModal(!openAcceptModal)
-}
+  const toogleModal = () => {
+    setAcceptModal(!openAcceptModal);
+  };
 
-const handleAcceptBooking = async () => {
-  
-}
+  const handleDeclineBooking = async () => {
+    try {
+      const res = await removeRentedHistory({
+        userId: userInfo?._id,
+        body: { propertyId: property?._id },
+      });
+      await sendNotificationBookDecline({
+        body: { user: renter?._id, property },
+      }).unwrap();
+    } catch (err) {
+      alert("Network Error, Try Again");
+      console.log(err);
+    }
+  };
 
-const handleDeclineBooking = async () => {
-   try{
-    const res = await removeRentedHistory({userId:userInfo?._id,body:{propertyId:property?._id}})
-    console.log(res)
-   }catch(err){
-    alert("Network Error, Try Again")
-    console.log(err)
-   }
-}
+  const handleBookAgain = async () => {
+    console.log(property?._id);
+    try {
+      const res = await removeOwnRentedHistory({
+        userId: userInfo?._id,
+        body: { propertyId: property?._id },
+      }).unwrap();
+      console.log(res, "res");
+      if (res?._id) {
+        alert("rental history removed, click Book Now to book again");
+        navigation.navigate("PropertyDetails", {
+          routeName,
+          propertyId: property?._id,
+        });
+      } else {
+        alert("there was an error removing rental history, try again");
+      }
+    } catch (err) {
+      alert("Network Error, Try Again");
+      console.log(err);
+    }
+  };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={handleNavigateToBookingDetails}>
-       <Modal visible={openAcceptModal} animationType="slide" transparent={true}>
-          <AcceptRentalModal property={property} toogleModal={toogleModal} renter={renter} />
-        </Modal>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={handleNavigateToBookingDetails}
+    >
+      <Modal visible={openAcceptModal} animationType="slide" transparent={true}>
+        <AcceptRentalModal
+          property={property}
+          toogleModal={toogleModal}
+          renter={renter}
+        />
+      </Modal>
       <View style={styles.imageContainer}>
         <Image source={{ uri: images[0]?.url }} style={styles.image} />
       </View>
       <View style={styles.detailsContainer}>
         <Text style={styles.propertyNameText}>{title}</Text>
-        <Text style={styles.checkInDate}>Booked on : {rentedAt || "N/A"}</Text>
-        <Text style={styles.checkInDate}>{status === "expired" ? "Expired":"Expires"} on : {rentedUntil || "N/A"}</Text>
-        <View style={styles.statusContainer}>
-        <Text
-          style={[
-            styles.statusText,
-            { color: status === "expired" && colors.red || status === "active" &&  "green" || status === "pending" &&  "purple" },
-          ]}
-        >
-          {status}
+        <Text style={styles.checkInDate}>
+          Booked on :{" "}
+          {(rentedAt && new Date(rentedAt)?.toLocaleDateString()) || "N/A"}
         </Text>
-        {!myBooking && <View style={styles.bookPromptContainer}>
-             {removingHistory ? <ActivityIndicator size={"small"} color={colors.primary} style={{marginHorizontal:10}} />:<TouchableOpacity onPress={handleDeclineBooking}>
-              <Text style={styles.declineBook}>Decline</Text>
-             </TouchableOpacity>}
-             <TouchableOpacity onPress={toogleModal}>
-             <Text style={styles.acceptBook}>Accept</Text>
-             </TouchableOpacity>
-          </View>}
-        {(status === "expired" && !myBooking) && <TouchableOpacity>
-          <Text style={styles.bookAgain}>Book again</Text>
-        </TouchableOpacity>}
+        <Text style={styles.checkInDate}>
+          {status?.toLowerCase() === "expired" ? "Expired" : "Expires"} on :{" "}
+          {(rentedUntil && new Date(rentedUntil)?.toLocaleDateString()) ||
+            "N/A"}
+        </Text>
+        <View style={styles.statusContainer}>
+          <Text
+            style={[
+              styles.statusText,
+              {
+                color:
+                  (status?.toLowerCase() === "expired" && colors.red) ||
+                  (status?.toLowerCase() === "active" && "green") ||
+                  (status?.toLowerCase() === "pending" && "purple"),
+              },
+            ]}
+          >
+            {status}
+          </Text>
+          {!myBooking && status?.toLowerCase() === "pending" && (
+            <View style={styles.bookPromptContainer}>
+              {removingHistory || sendingNotification ? (
+                <ActivityIndicator
+                  size={"small"}
+                  color={colors.primary}
+                  style={{ marginHorizontal: 10 }}
+                />
+              ) : (
+                <TouchableOpacity onPress={handleDeclineBooking}>
+                  <Text style={styles.declineBook}>Decline</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity onPress={toogleModal}>
+                <Text style={styles.acceptBook}>Accept</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {status?.toLowerCase() === "expired" && myBooking && (
+            <TouchableOpacity onPress={handleBookAgain}>
+              {removingHistory || removingOwnHistory ? (
+                <ActivityIndicator size={"small"} color={colors.primary} />
+              ) : (
+                <Text style={styles.bookAgain}>Book again</Text>
+              )}
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -92,7 +171,7 @@ const handleDeclineBooking = async () => {
 
 const styles = StyleSheet.create({
   container: {
-   width:"100%",
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -110,7 +189,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   detailsContainer: {
-    flex:1,
+    flex: 1,
     gap: 5,
   },
   propertyNameText: {
@@ -125,26 +204,26 @@ const styles = StyleSheet.create({
   statusText: {
     textTransform: "capitalize",
   },
-  statusContainer:{
-    flexDirection:"row",
-    alignItems:"center",
-  justifyContent:"space-between",
+  statusContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-  bookAgain:{
-    color:colors.primary,
-    fontSize:14,
-    fontWeight:"600",
+  bookAgain: {
+    color: colors.primary,
+    fontSize: 14,
+    fontWeight: "600",
   },
-  bookPromptContainer:{
-  flexDirection:"row",
-  alignItems:"center",
-  justifyContent:"space-between"
+  bookPromptContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
-  acceptBook:{
-   color: "#44E37A"
+  acceptBook: {
+    color: "#44E37A",
   },
-  declineBook:{
-   color: colors.red,
-   marginRight:15
-  }
+  declineBook: {
+    color: colors.red,
+    marginRight: 15,
+  },
 });

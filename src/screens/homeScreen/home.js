@@ -11,7 +11,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import CustomHeader from "../../customComponents/customHeader";
 import { Entypo } from "@expo/vector-icons";
 import colors from "../../configs/colors";

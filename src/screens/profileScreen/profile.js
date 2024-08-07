@@ -16,7 +16,6 @@ import React, { useState } from "react";
 import CustomHeader from "../../customComponents/customHeader";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { globalStyles } from "../../styles/globalStyles";
-import { mockUserData } from "../../data/mockData";
 import BookedList from "../../components/propertyComponents/bookedList";
 import MyBookedListComponent from "../../components/propertyComponents/myBookedList";
 import colors from "../../configs/colors";
@@ -45,8 +44,7 @@ export default function Profile({ navigation, route }) {
   });
   const {data: bookingHistory,isloading:bookingHistoryLoading} = useGetUserRentedHistoryQuery({userId:userInfo?._id});
   const {data: ownBookingHistory,isloading:ownBookingHistoryLoading} = useGetUserOwnRentedHistoryQuery({userId:userInfo?._id});
-  // console.log(bookingHistory,"bookinghistory")
-  // console.log(ownBookingHistory,"ownbookinghistory")
+
 
   const [deleteProfile, { isLoading: deletingProfile }] =
     useDeleteUserMutation();
